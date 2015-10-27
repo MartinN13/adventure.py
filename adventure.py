@@ -37,7 +37,7 @@ def cheat():
 	"""
 	print("To cheat...")
 
-def info(room):
+def roomInfo(room):
 	"""
 	Describes the current room.
 	"""
@@ -91,7 +91,7 @@ def bak(room):
 	else:
 		currentRoom = room + 1
 
-def se():
+def se(room):
 	"""
 	Look around the room.
 	"""
@@ -110,7 +110,7 @@ def se():
 	elif room == 6:
 		print("In this room there is...")
 
-def ledtrad():
+def ledtrad(room):
 	"""
 	Gives a clue.
 	"""
@@ -129,6 +129,98 @@ def ledtrad():
 	elif room == 6:
 		print("Clue 1 for this room is...")
 
+def objects(room):
+	"""
+	Prints all items in the room.
+	"""
+	if room == 0:
+		print("In this room there is a table, with a note on it.")
+	elif room == 1:
+		print("In this room there is...")
+	elif room == 2:
+		print("In this room there is...")
+	elif room == 3:
+		print("In this room there is...")
+	elif room == 4:
+		print("In this room there is...")
+	elif room == 5:
+		print("In this room there is...")
+	elif room == 6:
+		print("In this room there is...")
+
+def titta(objectName):
+	"""
+	Describes an object.
+	"""
+	if objectName == note:
+		print("This is a note")
+	elif objectName == 'someObject':
+		print("This is...")
+	elif objectName == 'someObject':
+		print("This is...")
+	elif objectName == 'someObject':
+		print("This is...")
+	elif objectName == 'someObject':
+		print("This is...")
+	elif objectName == 'someObject':
+		print("This is...")
+	elif objectName == 'someObject':
+		print("This is...")
+
+	
+def oppna(objectName):
+	"""
+	Opens an object, if possible.
+	"""
+	if objectName == 'someObject':
+		print("Open result here")
+	elif objectName == 'someObject':
+		print("Open result here")
+	else:
+		print("This object can't be opened.")
+	
+def sparka(objectName):
+	"""
+	Kicks an object, if possible, and breaks it.
+	"""
+	if objectName == 'someObject':
+		print("Kick result here")
+	elif objectName == 'someObject':
+		print("Kick result here")
+	else:
+		print("This object can't be kicked.")
+	
+def flytta(objectName):
+	"""
+	Moves an object, if possible.
+	"""
+	if objectName == 'someObject':
+		print("Move result here")
+	elif objectName == 'someObject':
+		print("Move result here")
+	else:
+		print("This object can't be moved.")
+
+def inventoryList():
+	"""
+	Prints the players inventory.
+	"""
+
+def ta(objectName):
+	"""
+	Adds an object to inventory.
+	"""
+
+def slapp(objectName):
+	"""
+	Drops an item from inventory.
+	"""
+
+def anvand(objectName):
+	"""
+	Uses an item from inventory.
+	"""
+
 def mainGame():
 	"""
 	The main function of the game.
@@ -139,8 +231,9 @@ def mainGame():
 		  You and your best friend Marvin suddenly woke up in a cold damp room with no way out but a big
 		  wooden door. In an attempt to escape you notice the door is locked. Marvin happens to notice
 		  a note laying on the table in the lower-left corner of the room. Maybe the note has some clues as to
-		  where you are and how you can escape?
+		  where you are and how you can escape? To read the note tell Marvin 'titta note'.
 		  """)
+
 	input("\nPress enter to continue...")
 
 	print("""
@@ -154,6 +247,70 @@ def mainGame():
 		  |______________________|
 
 		  """)
+
+	while True:
+		command = input("\nTell Marvin what you want to do: ")
+
+		# Room commands
+		if 'i' in command:
+			roomInfo()
+		elif 'info' in command:
+			roomInfo()
+		elif 'h' in command:
+			hjalp()
+		elif 'hjalp' in command:
+			hjalp()
+		elif 'fr' in command:
+			fram()
+		elif 'fram' in command:
+			fram()
+		elif 'ba' in command:
+			bak()
+		elif 'bak' in command:
+			bak()
+		elif 'se' in command:
+			se()
+		elif 'l' in command:
+			ledtrad()
+		elif 'ledtråd' in command:
+			ledtrad()
+		# Item commands
+		elif 'o' in command:
+			objects(command[2:len(command)])
+		elif 'objekt' in command:
+			objects(command[7:len(sparka)])
+		elif 't' in command:
+			titta(command[2:len(command)])
+		elif 'titta' in command:
+			titta(command[6:len(command)])
+		elif 'ö' in command:
+			oppna(command[2:len(command)])
+		elif 'öppna' in command:
+			oppna(command[6:len(command)])
+		elif 's' in command:
+			sparka(command[2:len(command)])
+		elif 'sparka' in command:
+			sparka(command[7:len(sparka)])
+		elif 'f' in command:
+			flytta(command[2:len(command)])
+		elif 'flytta' in command:
+			flytta(command[7:len(sparka)])
+		elif 'inv' in command:
+			inventoryList()
+		elif 'inventarier' in command:
+			inventoryList()
+		elif 'ta' in command:
+			ta(command[3:len(command)])
+		elif 'sl' in command:
+			slapp(command[3:len(command)])
+		elif 'släpp' in command:
+			slapp(command[6:len(command)])
+		elif 'a' in command:
+			anvand(command[2:len(command)])
+		elif 'använd' in command:
+			anvand(command[7:len(sparka)])
+		else:
+			print("Marvin doesn't understand you!")
 	
 def main():    
     """
