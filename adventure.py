@@ -11,7 +11,7 @@ def usage():
     """
     Prints possible options.
     """
-    print("""adventure.py. By Martin Nabhan. Version 1.0.
+    print("""\nadventure.py. By Martin Nabhan. Version 1.0.
  
 Options:
   -h --help        Display this help message.
@@ -25,7 +25,10 @@ def info():
     """
     Prints a description of the game.
     """
-    print("Explanation of game")
+    print("\nThe idea for this game came from having played a lot of escape-games as "
+          "a child. Especially 'Mysteriet på greveholm' (an escape-game based on a Swedish TV-series "
+          "of the same name) brings back fond memories. The basic premise is of you and your friend "
+          "Marvin waking up in a mysterious castle and having to solve various problems to escape this cold, damp place.")
 
 def version():
     """
@@ -37,9 +40,8 @@ def about():
     """
     Prints info about the creator.
     """
-    print("""My name is Martin Nabhan, I'm a student at Blekinge Institute of Technology 
-currently studying web-programming. I hope you'll enjoy this game!
-""")
+    print("\nMy name is Martin Nabhan, I'm a student at Blekinge Institute of Technology "
+          "currently studying web-programming. I hope you'll enjoy this game!")
 
 def cheat():
     """
@@ -70,7 +72,7 @@ def hjalp():
     """
     Lists available commands.
     """
-    print("""The available commands in this game are:
+    print("""\nThe available commands in this game are:
 
 i, info - Tells you about the current room.
 h, hjälp - Shows you all available commands.
@@ -91,81 +93,83 @@ sl [object], släpp [object] - Drops [object], if in inventory.
 a [object], använd [object] - Uses [object], if possible.
 """)
 
-def fram(room, inventory):
+def fram(currentRoom, inventory):
     """
     Move forward one room.
     """
-    if room == 0 and key0 in inventory:
-        currentRoom = room + 1
+    if currentRoom == 0 and 'key0' in inventory:
+        currentRoom = currentRoom + 1
         roomSelector(currentRoom)
-    elif room == 1 and key1 in inventory:
-        currentRoom = room + 1
+    elif currentRoom == 1 and 'key1' in inventory:
+        currentRoom = currentRoom + 1
         roomSelector(currentRoom)
-    elif room == 2 and key2 in inventory:
-        currentRoom = room + 1
+    elif currentRoom == 2 and 'key2' in inventory:
+        currentRoom = currentRoom + 1
         roomSelector(currentRoom)
-    elif room == 3 and key3 in inventory:
-        currentRoom = room + 1
+    elif currentRoom == 3 and 'key3' in inventory:
+        currentRoom = currentRoom + 1
         roomSelector(currentRoom)
-    elif room == 4 and key4 in inventory:
-        currentRoom = room + 1
+    elif currentRoom == 4 and 'key4' in inventory:
+        currentRoom = currentRoom + 1
         roomSelector(currentRoom)
-    elif room == 5 and key5 in inventory:
-        currentRoom = room + 1
+    elif currentRoom == 5 and 'key5' in inventory:
+        currentRoom = currentRoom + 1
         roomSelector(currentRoom)
-    elif room == 6 and key6 in inventory:
-        currentRoom = room + 1
+    elif currentRoom == 6 and 'key6' in inventory:
+        currentRoom = currentRoom + 1
         roomSelector(currentRoom)
     else:
         print("You haven't unlocked the next room yet!")
+    return(currentRoom)
 
-def bak(room):
+def bak(currentRoom):
     """
     Go back one room.
     """
-    if room == 0:
+    if currentRoom == 0:
         print("You are already in the first room!")
     else:
-        currentRoom = room - 1
+        currentRoom = currentRoom - 1
         roomSelector(currentRoom)
+    return(currentRoom)
 
 def se(room):
     """
     Look around the room.
     """
     if room == 0:
-        print("In this room there is...")
+        print("In room 1 there is...")
     elif room == 1:
-        print("In this room there is...")
+        print("In room 2 there is...")
     elif room == 2:
-        print("In this room there is...")
+        print("In room 3 there is...")
     elif room == 3:
-        print("In this room there is...")
+        print("In room 4 there is...")
     elif room == 4:
-        print("In this room there is...")
+        print("In room 5 there is...")
     elif room == 5:
-        print("In this room there is...")
+        print("In room 6 there is...")
     elif room == 6:
-        print("In this room there is...")
+        print("In room 7 there is...")
 
 def ledtrad(room):
     """
     Gives a clue.
     """
     if room == 0:
-        print("Clue 1 for this room is...")
+        print("Clue 1 for room 1 is...")
     elif room == 1:
-        print("Clue 1 for this room is...")
+        print("Clue 1 for room 2 is...")
     elif room == 2:
-        print("Clue 1 for this room is...")
+        print("Clue 1 for room 3 is...")
     elif room == 3:
-        print("Clue 1 for this room is...")
+        print("Clue 1 for room 4 is...")
     elif room == 4:
-        print("Clue 1 for this room is...")
+        print("Clue 1 for room 5 is...")
     elif room == 5:
-        print("Clue 1 for this room is...")
+        print("Clue 1 for room 6 is...")
     elif room == 6:
-        print("Clue 1 for this room is...")
+        print("Clue 1 for room 7 is...")
 
 def objects(room):
     """
@@ -174,17 +178,17 @@ def objects(room):
     if room == 0:
         print("In this room there is a table with a note on it.")
     elif room == 1:
-        print("In this room there is...")
+        print("In room 2 there is...")
     elif room == 2:
-        print("In this room there is...")
+        print("In room 3 there is...")
     elif room == 3:
-        print("In this room there is...")
+        print("In room 4 there is...")
     elif room == 4:
-        print("In this room there is...")
+        print("In room 5 there is...")
     elif room == 5:
-        print("In this room there is...")
+        print("In room 6 there is...")
     elif room == 6:
-        print("In this room there is...")
+        print("In room 7 there is...")
 
 def titta(objectName):
     """
@@ -251,29 +255,29 @@ def inventoryList(inventory):
         print("Your inventory is empty!")
     else:
         for item in inventory:
-            inventoryNames = item + " "
-        print("You have %sin your inventory." % inventoryNames)
+            inventoryNames = inventoryNames + item + " "
+        print("Your inventory contains: \n%s" % inventoryNames)
 
-def ta(objectName):
+def ta(objectName, inventory):
     """
     Adds an object to inventory.
     """
     if objectName == 'takeable item':
-        # Append item to inventory list.
+        inventory.append(objectName)
         print("%s was added to your inventory." % objectName.capitalize())
     else:
         print("This object can't be taken!")
 
-def slapp(objectName):
+def slapp(objectName, inventory):
     """
     Drops an item from inventory.
     """
     if objectName in inventory:
-        # Remove item from inventory list.
+        inventory.remove(objectNamex)
     else:
         print("There is no such item in your inventory!")
 
-def anvand(objectName):
+def anvand(objectName, inventory):
     """
     Uses an item from inventory.
     """
@@ -380,7 +384,7 @@ def mainGame():
     The main function of the game.
     """
     currentRoom = 0
-    inventory = ["flower, note, umbrella"]
+    inventory = ["key0", "key1"]
 
     print("You and your best friend Marvin suddenly woke up in a cold damp room with no way out but a big "
           "wooden door. In an attempt to escape you notice the door is locked. Marvin happens to notice "
@@ -404,13 +408,13 @@ def mainGame():
         elif 'hjälp' in command.split():
             hjalp()
         elif 'fr' in command.split():
-            fram(currentRoom, inventory)
+            currentRoom = fram(currentRoom, inventory)
         elif 'fram' in command.split():
-            fram(currentRoom, inventory)
+            currentRoom = fram(currentRoom, inventory)
         elif 'ba' in command.split():
-            bak(currentRoom)
+            currentRoom = bak(currentRoom)
         elif 'bak' in command.split():
-            bak(currentRoom)
+            currentRoom = bak(currentRoom)
         elif 'se' in command.split():
             se(currentRoom)
         elif 'l' in command.split():
