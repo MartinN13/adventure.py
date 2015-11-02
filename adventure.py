@@ -19,7 +19,7 @@ Options:
   -v --version     Prints version number.
   -a --about       Prints a short introduction of the game's creator.
   -c --cheat       Tells how to solve the game, and how to load a finished save-game.
- """)
+""")
 
 def info():
     """
@@ -28,7 +28,7 @@ def info():
     print("\nThe idea for this game came from having played a lot of escape-games as "
           "a child. Especially 'Mysteriet på greveholm' (an escape-game based on a Swedish TV-series "
           "of the same name) brings back fond memories. The basic premise is of you and a stranger named "
-          "Marvin waking up in a mysterious castle and having to solve various problems to escape this cold, damp place.")
+          "Marvin waking up in a mysterious castle and having to solve various problems to escape this cold, damp place.\n")
 
 def version():
     """
@@ -41,7 +41,7 @@ def about():
     Prints info about the creator.
     """
     print("\nMy name is Martin Nabhan, I'm a student at Blekinge Institute of Technology "
-          "currently studying web-programming. I hope you'll enjoy this game!")
+          "currently studying web-programming. I hope you'll enjoy this game!\n")
 
 def cheat():
     """
@@ -54,7 +54,7 @@ def roomInfo(room):
     Describes the current room.
     """
     if room == 0:
-        print("\nA cold, stone-tiled room looking as if it belongs to an old medieval castle presents itself in front of you. "
+        print("A cold, stone-tiled room looking as if it belongs to an old medieval castle presents itself in front of you. "
               "There are no windows and there seems to be no other way to escape but through the main door.")
     elif room == 1:
         print("This is room 2.")
@@ -73,7 +73,7 @@ def hjalp():
     """
     Lists available commands.
     """
-    print("""\nThe available commands in this game are:
+    print("""The available commands in this game are:
 
 i, info - Tells you about the current room.
 h, hjälp - Shows you all available commands.
@@ -91,14 +91,13 @@ f [object], flytta [object] - Moves [object], if p
 inv, inventarier - Tells you what's in your inventory.
 ta [object] - Adds [object] to inventory, if possible.
 sl [object], släpp [object] - Drops [object], if in inventory.
-a [object], använd [object] - Uses [object], if possible.
-""")
+a [object], använd [object] - Uses [object], if possible.""")
 
-def fram(currentRoom, inventory):
+def fram(currentRoom, inventory, padlock):
     """
     Move forward one room.
     """
-    if currentRoom == 0 and 'key1' in inventory:
+    if currentRoom == 0 and padlock == 1:
         currentRoom = currentRoom + 1
         roomSelector(currentRoom)
     elif currentRoom == 1 and 'key2' in inventory:
@@ -120,15 +119,16 @@ def fram(currentRoom, inventory):
         currentRoom = currentRoom + 1
         roomSelector(currentRoom)
     else:
-        print("\nYou haven't unlocked the next room yet!")
+        print("You haven't unlocked the next room yet!")
+
     return(currentRoom)
 
 def bak(currentRoom):
     """
     Go back one room.
-    """
+    """ 
     if currentRoom == 0:
-        print("\nYou are already in the first room!")
+        print("You are already in the first room!")
     else:
         currentRoom = currentRoom - 1
         roomSelector(currentRoom)
@@ -139,10 +139,9 @@ def se(room):
     Look around the room.
     """
     if room == 0:
-        print("\nTrying to escape you realize there's a locked padlock on the door, requiring a four-digit passcode. "
+        print("Trying to escape you realize there's a locked padlock on the door, requiring a four-digit passcode. "
               "Marvin happens to notice a note laying on the table in the lower-left corner of the room. "
-              "Maybe the note has some clues as to where you are and how you can escape?"
-              "\n\nTo read the note tell Marvin 't note' or 'titta note'.")
+              "Maybe the note has some clues as to where you are and how you can escape?")
     elif room == 1:
         print("In room 2 there is...")
     elif room == 2:
@@ -162,11 +161,13 @@ def ledtrad(room, clueCounter):
     """
     if room == 0:
         if clueCounter == 0:
-            print("\nTo take a look around the room tell Marvin 'se'.")
+            print("To take a look around the room tell Marvin 'se'.")
         elif clueCounter == 1:
-            print("\nA new day starts at 00:00.")
+            print("Try unlocking the padlock by telling Marvin 'ö padlock' or 'öppna padlock'.")
+        elif clueCounter == 2:
+            print("A new day starts at 00:00.")
         else:
-            print("\nThere are no more clues!")
+            print("There are no more clues!")
     elif room == 1:
         print("Clue 1 for room 2 is...")
     elif room == 2:
@@ -188,7 +189,7 @@ def objects(room):
     Prints all items in the room.
     """
     if room == 0:
-        print("\nIn this room there is a table with a note on it.")
+        print("In this room there is a table with a note on it, along with a padlock keeping the door locked.")
     elif room == 1:
         print("In room 2 there is...")
     elif room == 2:
@@ -207,13 +208,14 @@ def titta(objectName):
     Describes an object.
     """
     if objectName == 'note':
-        print("\nWhen there is darkness, be the first to shine a light."
-              "When there is injustice, be the first to condemn it."
-              "When something seems difficult, do it anyway."
-              "When life seems to beat you down, fight back."
+        print("Reading the note it says:\n"
+              "When there is darkness, be the first to shine a light.\n"
+              "When there is injustice, be the first to condemn it.\n"
+              "When something seems difficult, do it anyway.\n"
+              "When life seems to beat you down, fight back.\n"
               "When a new day begins, open a new door.")
-    elif objectName == 'someObject':
-        print("This is...")
+    elif objectName == 'padlock':
+        print("This is a padlock, it seems to require four digits.")
     elif objectName == 'someObject':
         print("This is...")
     elif objectName == 'someObject':
@@ -225,7 +227,7 @@ def titta(objectName):
     elif objectName == 'someObject':
         print("This is...")
     else:
-        print("\nThere is no such object!")
+        print("There is no such object!")
 
     
 def oppna(objectName):
@@ -237,7 +239,7 @@ def oppna(objectName):
     elif objectName == 'someObject':
         print("Open result here")
     else:
-        print("\nThis object can't be opened!")
+        print("This object can't be opened!")
     
 def sparka(objectName):
     """
@@ -248,7 +250,7 @@ def sparka(objectName):
     elif objectName == 'someObject':
         print("Kick result here")
     else:
-        print("\nThis object can't be kicked!")
+        print("This object can't be kicked!")
     
 def flytta(objectName):
     """
@@ -259,7 +261,7 @@ def flytta(objectName):
     elif objectName == 'someObject':
         print("Move result here")
     else:
-        print("\nThis object can't be moved!")
+        print("This object can't be moved!")
 
 def inventoryList(inventory):
     """
@@ -268,21 +270,21 @@ def inventoryList(inventory):
     inventoryCount = 0
     inventoryNames = ""
     if not inventory:
-        print("\nYour inventory is empty!")
+        print("Your inventory is empty!")
     else:
         for item in inventory:
             inventoryNames = inventoryNames + item + " "
-        print("\nYour inventory contains: \n%s" % inventoryNames)
+        print("Your inventory contains: \n%s" % inventoryNames)
 
 def ta(objectName, inventory):
     """
     Adds an object to inventory.
     """
-    if objectName == 'takeable item':
+    if objectName == 'note':
         inventory.append(objectName)
-        print("\n%s was added to your inventory." % objectName.capitalize())
+        print("%s was added to your inventory." % objectName.capitalize())
     else:
-        print("\nThis object can't be taken!")
+        print("This object can't be taken!")
 
 def slapp(objectName, inventory):
     """
@@ -290,24 +292,41 @@ def slapp(objectName, inventory):
     """
     if objectName in inventory:
         inventory.remove(objectName)
-        print("\n%s was remoed from your inventory." % objectName.capitalize())
+        print("%s was remoed from your inventory." % objectName.capitalize())
     else:
-        print("\nThere is no such item in your inventory!")
+        print("There is no such item in your inventory!")
 
 def anvand(objectName, inventory):
     """
     Uses an item from inventory.
     """
     if objectName in inventory:
-        if objectName == 'key0':
-            print("\nYou unlocked the door to room 2!"
+        if objectName == 'key2':
+            print("You unlocked the door to room 3!"
                   "Open the door by telling Marvin 'fr' or 'fram'.")
         elif objectName == 'someItem':
             print("Item reaction here")
         else:
-            print("\nThis item doesn't do anything.")
+            print("This item doesn't do anything.")
     else:
-        print("\nThere is no such item in your inventory!")
+        print("There is no such item in your inventory!")
+
+def padlock(room, padlockStatus):
+    """
+    Unlocks a padlock if the user inputs the right digits.
+    """
+    if padlockStatus == 1:
+        print("This padlock is already unlocked!")
+    elif room == 0:
+        digits = input("Please type a four-number combination: ")
+        if digits == '0000':
+            print("The door has been unlocked! To go to the next room type 'fr' or 'fram'.")
+            padlockStatus = 1
+        else:
+            print("The combination didn't work!")
+            padlockStatus = 0
+
+    return(padlockStatus)
 
 def roomSelector(currentRoom):
     """
@@ -318,7 +337,7 @@ def roomSelector(currentRoom):
                         Room 1
                __________==__________
               |                      |
-              |   Welcome note       |
+              |                      |
               |                      |
               |                      |
               |  _                   |
@@ -413,7 +432,8 @@ def mainGame():
     currentRoom = 0
     clueCount = 0
     padlock1 = 0
-    inventory = ["key1", "key2"]
+    padlock5 = 0
+    inventory = []
 
     print("\nWelcome to this mysterious adventure! Tell Marvin 'h' or 'hjälp' to get a list of all available commands. "
           "Whenever you get into a new room it might be useful to use the 'se' command to look around. If you get stuck "
@@ -427,7 +447,7 @@ def mainGame():
 
     while True:
         command = input("\nTell Marvin what you want to do: ")
-
+        print("\n")
         # Room commands.
         if 'i' in command.split():
             roomInfo(currentRoom)
@@ -438,13 +458,23 @@ def mainGame():
         elif 'hjälp' in command.split():
             hjalp()
         elif 'fr' in command.split():
-            currentRoom = fram(currentRoom, inventory)
+            if currentRoom == 0:
+                currentRoom = fram(currentRoom, inventory, padlock1)
+            else:
+                currentRoom = fram(currentRoom, inventory)
+            clueCount = 0
         elif 'fram' in command.split():
-            currentRoom = fram(currentRoom, inventory)
+            if currentRoom == 0:
+                currentRoom = fram(currentRoom, inventory, padlock1)
+            else:
+                currentRoom = fram(currentRoom, inventory)
+            clueCount = 0
         elif 'ba' in command.split():
             currentRoom = bak(currentRoom)
+            clueCount = 0
         elif 'bak' in command.split():
             currentRoom = bak(currentRoom)
+            clueCount = 0
         elif 'se' in command.split():
             se(currentRoom)
         elif 'l' in command.split():
@@ -460,8 +490,18 @@ def mainGame():
             titta(command[2:len(command)])
         elif 'titta ' in command:
             titta(command[6:len(command)])
+        elif 'ö padlock' in command: # Special function for opening the padlock.
+            if currentRoom == 0:
+                padlock1 = padlock(currentRoom, padlock1)
+            elif currentRoom == 5:
+                padlock5 = padlock(currentRoom, padlock5)
         elif 'ö ' in command:
             oppna(command[2:len(command)])
+        elif 'öppna padlock' in command: # Again, a special function for padlock.
+            if currentRoom == 0:
+                padlock1 = padlock(currentRoom, padlock1)
+            elif currentRoom == 5:
+                padlock5 = padlock(currentRoom, padlock5)
         elif 'öppna ' in command:
             oppna(command[6:len(command)])
         elif 's ' in command:
@@ -488,8 +528,8 @@ def mainGame():
         elif 'använd ' in command:
             anvand(command[7:len(command)])
         else:
-            print("\nMarvin doesn't understand you!")
-    
+            print("Marvin doesn't understand you!")
+
 def main():    
     """
     The main function of the program, which looks for options and launches the game.
