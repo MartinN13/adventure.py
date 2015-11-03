@@ -203,11 +203,11 @@ def objects(room):
     elif room == 6:
         print("In room 7 there is...")
 
-def titta(objectName):
+def titta(objectName, room):
     """
     Describes an object.
     """
-    if objectName == 'note':
+    if objectName == 'note' and room == 0:
         print("Reading the note it says:\n"
               "When there is darkness, be the first to shine a light.\n"
               "When there is injustice, be the first to condemn it.\n"
@@ -323,7 +323,7 @@ def padlock(room, padlockStatus):
             print("The door has been unlocked! To go to the next room type 'fr' or 'fram'.")
             padlockStatus = 1
         else:
-            print("The combination didn't work!")
+            print("The combination didn't work! Maybe there is a clue somewhere?")
             padlockStatus = 0
 
     return(padlockStatus)
@@ -335,14 +335,14 @@ def roomSelector(currentRoom):
     if currentRoom == 0:
         print("""
                         Room 1
-               __________==__________
+               ______________________
               |                      |
               |                      |
               |                      |
               |                      |
               |  _                   |
-              | |_|                  |
-              |______________________|
+              | |x|                  |
+              |__________==__________|
               """)
         roomInfo(currentRoom)
     elif currentRoom == 1:
@@ -350,12 +350,12 @@ def roomSelector(currentRoom):
                         Room 2
                __________==__________
               |                      |
+              |   x                  |
               |                      |
               |                      |
+              |     x           x    |
               |                      |
-              |  _                   |
-              | |_|                  |
-              |______________________|
+              |__________==__________|
               """)
         roomInfo(currentRoom)
     elif currentRoom == 2:
@@ -366,22 +366,22 @@ def roomSelector(currentRoom):
               |                      |
               |                      |
               |                      |
-              |  _                   |
-              | |_|                  |
-              |______________________|
+              |  x                   |
+              |                      |
+              |__________==__________|
               """)
         roomInfo(currentRoom)
     elif currentRoom == 3:
         print("""
                         Room 4
                __________==__________
-              |                      |
-              |                      |
-              |  Rope-magnet-fishing |
-              |                      |
-              |  _                   |
-              | |_|                  |
-              |______________________|
+              |       |              |
+              |       |              |
+              |       |      fishing |
+              |    x  |              |
+              |       |             _|
+              |       |            |_|
+              |_______|__==__________|
               """)
         roomInfo(currentRoom)
     elif currentRoom == 4:
@@ -390,11 +390,11 @@ def roomSelector(currentRoom):
                __________==__________
               |                      |
               |                      |
+              |_                    <|
+              |_|     UV-Light       |
+              |                     <|
               |                      |
-              |       UV-Light       |
-              |  _                   |
-              | |_|                  |
-              |______________________|
+              |__________==__________|
               """)
         roomInfo(currentRoom)
     elif currentRoom == 5:
@@ -404,10 +404,10 @@ def roomSelector(currentRoom):
               |                      |
               |                      |
               |                      |
-              |  Schiffer-decrypt    |
-              |  _                   |
-              | |_|                  |
-              |______________________|
+              |  Schiffer            |   
+              |                  _   |
+              |                 |_|  |
+              |__________==__________|
               """)
         roomInfo(currentRoom)
     elif currentRoom == 6:
@@ -415,12 +415,12 @@ def roomSelector(currentRoom):
                         Room 7
                __________==__________
               |                      |
+              |     _                |
+              |    | |               |
+              |    |x|    ticTacToe  |
+              |    |_|               |
               |                      |
-              |                      |
-              |      TicTacToe       |
-              |  _                   |
-              | |_|                  |
-              |______________________|
+              |_________====_________|
               """)
         roomInfo(currentRoom)
 
@@ -487,9 +487,9 @@ def mainGame():
         elif 'objekt' in command.split():
             objects(currentRoom)
         elif 't ' in command:
-            titta(command[2:len(command)])
+            titta(command[2:len(command)], currentRoom)
         elif 'titta ' in command:
-            titta(command[6:len(command)])
+            titta(command[6:len(command)], currentRoom)
         elif 'ö padlock' in command: # Special function for opening the padlock.
             if currentRoom == 0:
                 padlock1 = padlock(currentRoom, padlock1)
