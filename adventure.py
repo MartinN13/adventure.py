@@ -189,7 +189,7 @@ def objects(room):
     Prints all items in the room.
     """
     if room == 0:
-        print("In this room there is a table with a note on it, along with a padlock keeping the door locked.")
+        print("In this room there is a table with a 'note' on it, along with a 'padlock' keeping the door locked.")
     elif room == 1:
         print("In room 2 there is...")
     elif room == 2:
@@ -230,38 +230,38 @@ def titta(objectName, room):
         print("There is no such object!")
 
     
-def oppna(objectName):
+def oppna(objectName, room):
     """
     Opens an object, if possible.
     """
-    if objectName == 'someObject':
+    if objectName == 'someObject' and room == 0:
         print("Open result here")
-    elif objectName == 'someObject':
+    elif objectName == 'someObject' and room == 0:
         print("Open result here")
     else:
-        print("This object can't be opened!")
+        print("This object doesn't exist or it can't be opened!")
     
-def sparka(objectName):
+def sparka(objectName, room):
     """
     Kicks an object, if possible, and breaks it.
     """
-    if objectName == 'someObject':
+    if objectName == 'someObject' and room == 0:
         print("Kick result here")
-    elif objectName == 'someObject':
+    elif objectName == 'someObject' and room == 0:
         print("Kick result here")
     else:
-        print("This object can't be kicked!")
+        print("This object doesn't exist or it can't be kicked!")
     
-def flytta(objectName):
+def flytta(objectName, room):
     """
     Moves an object, if possible.
     """
-    if objectName == 'someObject':
+    if objectName == 'someObject' and room == 0:
         print("Move result here")
-    elif objectName == 'someObject':
+    elif objectName == 'someObject' and room == 0:
         print("Move result here")
     else:
-        print("This object can't be moved!")
+        print("This object doesn't exist or it can't be moved!")
 
 def inventoryList(inventory):
     """
@@ -276,15 +276,15 @@ def inventoryList(inventory):
             inventoryNames = inventoryNames + item + " "
         print("Your inventory contains: \n%s" % inventoryNames)
 
-def ta(objectName, inventory):
+def ta(objectName, inventory, room):
     """
     Adds an object to inventory.
     """
-    if objectName == 'note':
+    if objectName == 'note' and room == 0:
         inventory.append(objectName)
         print("%s was added to your inventory." % objectName.capitalize())
     else:
-        print("This object can't be taken!")
+        print("This object doesn't exist or it can't be taken!")
 
 def slapp(objectName, inventory):
     """
@@ -292,18 +292,21 @@ def slapp(objectName, inventory):
     """
     if objectName in inventory:
         inventory.remove(objectName)
-        print("%s was remoed from your inventory." % objectName.capitalize())
+        print("%s was removed from your inventory." % objectName.capitalize())
     else:
         print("There is no such item in your inventory!")
 
-def anvand(objectName, inventory):
+def anvand(objectName, inventory, room):
     """
     Uses an item from inventory.
     """
     if objectName in inventory:
         if objectName == 'key2':
-            print("You unlocked the door to room 3!"
-                  "Open the door by telling Marvin 'fr' or 'fram'.")
+            if room == 2:
+                print("You unlocked the door to room 3!"
+                      "Open the door by telling Marvin 'fr' or 'fram'.")
+            else:
+                print("This key can only be used on the door in room 2!")
         elif objectName == 'someItem':
             print("Item reaction here")
         else:
@@ -449,84 +452,60 @@ def mainGame():
         command = input("\nTell Marvin what you want to do: ")
         print("\n")
         # Room commands.
-        if 'i' in command.split():
+        if 'i' in command.split() or 'info' in command.split():
             roomInfo(currentRoom)
-        elif 'info' in command.split():
-            roomInfo(currentRoom)
-        elif 'h' in command.split():
+        elif 'h' in command.split() or 'hjälp' in command.split():
             hjalp()
-        elif 'hjälp' in command.split():
-            hjalp()
-        elif 'fr' in command.split():
+        elif 'fr' in command.split() or 'fram' in command.split():
             if currentRoom == 0:
                 currentRoom = fram(currentRoom, inventory, padlock1)
             else:
                 currentRoom = fram(currentRoom, inventory)
             clueCount = 0
-        elif 'fram' in command.split():
-            if currentRoom == 0:
-                currentRoom = fram(currentRoom, inventory, padlock1)
-            else:
-                currentRoom = fram(currentRoom, inventory)
-            clueCount = 0
-        elif 'ba' in command.split():
-            currentRoom = bak(currentRoom)
-            clueCount = 0
-        elif 'bak' in command.split():
+        elif 'ba' in command.split() or 'bak' in command.split():
             currentRoom = bak(currentRoom)
             clueCount = 0
         elif 'se' in command.split():
             se(currentRoom)
-        elif 'l' in command.split():
-            clueCount = ledtrad(currentRoom, clueCount)
-        elif 'ledtråd' in command.split():
+        elif 'l' in command.split() or 'ledtråd' in command.split():
             clueCount = ledtrad(currentRoom, clueCount)
         # Item commands.
-        elif 'o' in command.split():
-            objects(currentRoom)
-        elif 'objekt' in command.split():
+        elif 'o' in command.split() or 'objekt' in command.split():
             objects(currentRoom)
         elif 't ' in command:
             titta(command[2:len(command)], currentRoom)
         elif 'titta ' in command:
             titta(command[6:len(command)], currentRoom)
-        elif 'ö padlock' in command: # Special function for opening the padlock.
+        elif 'ö padlock' in command or 'öppna padlock' in command: # Special function for opening the padlock.
             if currentRoom == 0:
                 padlock1 = padlock(currentRoom, padlock1)
             elif currentRoom == 5:
                 padlock5 = padlock(currentRoom, padlock5)
         elif 'ö ' in command:
-            oppna(command[2:len(command)])
-        elif 'öppna padlock' in command: # Again, a special function for padlock.
-            if currentRoom == 0:
-                padlock1 = padlock(currentRoom, padlock1)
-            elif currentRoom == 5:
-                padlock5 = padlock(currentRoom, padlock5)
+            oppna(command[2:len(command)], currentRoom)
         elif 'öppna ' in command:
-            oppna(command[6:len(command)])
+            oppna(command[6:len(command)], currentRoom)
         elif 's ' in command:
-            sparka(command[2:len(command)])
+            sparka(command[2:len(command)], currentRoom)
         elif 'sparka ' in command:
-            sparka(command[7:len(command)])
+            sparka(command[7:len(command)], currentRoom)
         elif 'f ' in command:
-            flytta(command[2:len(command)])
+            flytta(command[2:len(command)], currentRoom)
         elif 'flytta ' in command:
-            flytta(command[7:len(command)])
+            flytta(command[7:len(command)], currentRoom)
         # Inventory commands.
-        elif 'inv' in command.split():
-            inventoryList(inventory)
-        elif 'inventarier' in command.split():
+        elif 'inv' in command.split() or 'inventarier' in command.split():
             inventoryList(inventory)
         elif 'ta ' in command:
-            ta(command[3:len(command)])
+            ta(command[3:len(command)], currentRoom)
         elif 'sl ' in command:
             slapp(command[3:len(command)])
         elif 'släpp ' in command:
             slapp(command[6:len(command)])
         elif 'a ' in command:
-            anvand(command[2:len(command)])
+            anvand(command[2:len(command)], currentRoom)
         elif 'använd ' in command:
-            anvand(command[7:len(command)])
+            anvand(command[7:len(command)], currentRoom)
         else:
             print("Marvin doesn't understand you!")
 
