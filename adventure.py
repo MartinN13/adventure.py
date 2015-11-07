@@ -68,7 +68,8 @@ def roomInfo(room):
               "below the ceiling, leaving a gap inbetween. The area within the glass is filled with water and it "
               "seems impossible to climb over the wall as it's too high!")
     elif room == 4:
-        print("This is room 5.")
+        print("The fifth room is just as uninviting as the ones before it. No windows, stone walls, it's another "
+              "room that could very well be likened to a prison cell. How will you escape?")
     elif room == 5:
         print("This is room 6.")
     elif room == 6:
@@ -113,8 +114,8 @@ def fram(currentRoom, inventory, item=0, extraItem=0):
         roomSelector(currentRoom, inventory, item, extraItem)
     elif currentRoom == 3 and item == 1:
         currentRoom = currentRoom + 1
-        roomSelector(currentRoom)
-    elif currentRoom == 4 and 'key5' in inventory:
+        roomSelector(currentRoom, inventory)
+    elif currentRoom == 4 and item == 1:
         currentRoom = currentRoom + 1
         roomSelector(currentRoom)
     elif currentRoom == 5 and 'key6' in inventory:
@@ -142,6 +143,8 @@ def bak(currentRoom, inventory, item=[], extraItem=[]):
         if 'note' in inventory:
             roomSelector(currentRoom, inventory)
         elif 'rope' in inventory:
+            roomSelector(currentRoom, inventory)
+        elif 'UV-light' in inventory:
             roomSelector(currentRoom, inventory)
         else:
             roomSelector(currentRoom)
@@ -187,7 +190,12 @@ def se(room, inventory=[], item=0):
         elif 'rope' in inventory and item == 1:
             print("The door has been unlocked, and there is nothing else left in the room.")
     elif room == 4:
-        print("In room 5 there is...")
+        if item == 0:
+            print("Looking around the room you see two objects hanging on the wall, "
+                  "a wooden 'closet', and a door locked with a 'padlock'")
+        elif item == 1:
+            print("Looking around the room you see two objects hanging on the wall, "
+                  "a wooden 'closet', and an unlocked door.")
     elif room == 5:
         print("In room 6 there is...")
     elif room == 6:
@@ -230,7 +238,12 @@ def ledtrad(room, clueCounter):
         else:
             print("There are no more clues!")
     elif room == 4:
-        print("Clue 1 for room 5 is...")
+        if clueCounter == 0:
+            print("Maybe there is something in the closet?")
+        elif clueCounter == 1:
+            print("Is there anything with a battery in the room?")
+        elif clueCounter == 2:
+            print("If only there was some note or message you could use the UV-light on...")
     elif room == 5:
         print("Clue 1 for room 6 is...")
     elif room == 6:
@@ -273,7 +286,8 @@ def objects(room, inventory=[], item=0):
         elif 'wet-key' not in inventory and item == 0:
             print("In this room there is a 'rope' and a 'wet-key' on the other side of the wall.")
     elif room == 4:
-        print("In room 5 there is...")
+        print("In this room there is a 'lamp' and a 'clock' hanging on the wall, on the opposite side there is a 'closet' "
+              "and finally there is a 'padlock'.")
     elif room == 5:
         print("In room 6 there is...")
     elif room == 6:
@@ -301,7 +315,7 @@ def titta(objectName, room, inventory=[], item=0):
                       "When life seems to beat you down, fight back.\n"
                       "When a new day begins, open a new door.\n"
                       "\nMaybe there is another hidden message to be found?")
-    elif objectName == 'padlock' and room == 0:
+    elif objectName == 'padlock':
         print("This is a padlock, it seems to require four digits.")
     elif objectName == 'vase' and room == 1:
         if 'rusty-key' in inventory or item == 1:
@@ -316,10 +330,22 @@ def titta(objectName, room, inventory=[], item=0):
         print("A boombox-style stereo. It doesn't seem to work.")
     elif objectName == 'lock' and room == 2:
         print("A digital lock, which doesn't seem to take either a code nor a key!")
+    elif objectName == 'magnet':
+        print("A small magnet, taken from a speaker.")
     elif objectName == 'rope' and room == 3:
         print("A sturdy rope, about 6 meters long.")
+    elif objectName == 'fishing-tool':
+        print("A magnet tied to the end of a rope, effectively becoming a fishing tool.")
     elif objectName == 'wet-key' and room == 3:
-        print("A wet-key with water dripping from it.")
+        print("A wet key with water dripping from it.")
+    elif objectName == 'lamp' and room == 4:
+        print("A lamp hanging from the wall, it seems to be battery powered.")
+    elif objectName == 'clock' and room == 4:
+        print("An out of place, modern, clock is hanging on the wall.")
+    elif objectName == 'closet' and room == 4:
+        print("A wooden closet, it looks old.")
+    elif objectName == 'UV-light':
+        print("A UV flashlight, it seeems to take two batteries.")
     else:
         print("There is no such object!")
 
@@ -329,14 +355,44 @@ def oppna(objectName, room, inventory, item=[]):
     Opens an object, if possible.
     """
     if objectName == 'stereo' and room == 2:
-        if item == 0:
+        if 'magnet' in inventory or item == 1:
+            print("There is nothing else useful found from the 'stereo'")
+        else:
             print("You pry open the stereo and take out the 'magnet' from its left speaker.")
             print("\n'magnet' has been added to your inventory.")
             inventory.append('magnet')
-        elif item == 1:
-            print("There is nothing else useful found from the 'stereo'")
-    elif objectName == 'someObject' and room == 0:
-        print("Open result here")
+    elif objectName == 'closet' and room == 4:
+        if 'UV-light' in inventory or item == 1:
+            print("There is nothing else in the closet.")
+        else:
+            print("You open the closet and find a 'UV-light'!")
+            print("\n'UV-light' has been added to your inventory.")
+            inventory.append('UV-light')
+            print("""
+                        Room 5
+               __________==__________
+              |                      |
+              |                      |
+              |_                    <|
+              | |                    |
+              |                     <|
+              |                      |
+              |__________==__________|
+              """)
+    elif objectName == 'clock' and room == 4:
+        if 'clock-battery' in inventory or item == 1:
+            print("You open the clock one more time but there is nothing of interest.")
+        else:
+            print("You look behind the clock and open it up, inside there is one single AA 'clock-battery'!")
+            print("\n'clock-battery' has been added to your inventory.")
+            inventory.append('clock-battery')
+    elif objectName == 'lamp' and room == 4:
+        if 'lamp-battery' in inventory or item == 2:
+            print("You open the lamp again and find nothing .")
+        else:
+            print("You lift the lamp off the wall and find one single AA 'lamp-battery'!")
+            print("\n'lamp-battery' has been added to your inventory.")
+            inventory.append('lamp-battery')
     else:
         print("This object doesn't exist or it can't be opened!")
     
@@ -448,26 +504,26 @@ def anvand(objectName, inventory, room, item=0):
                 print("This key can only be used on the door in room 2!")
         elif objectName == 'magnet':
             if room == 2 and item == 0:
-                print("You hold the magnet near the digital 'lock', the display flickers and the lock shuts off! "
+                print("You hold the 'magnet' near the digital 'lock', the display flickers and the lock shuts off! "
                       "\nDoor 3 has now been unlocked.")
                 item = 1
             elif room == 3 and item == 0 and 'rope' in inventory:
-                print("You tie the magnet onto the end of the rope, creating a 'fishing-tool', "
+                print("You tie the 'magnet' onto the end of the 'rope', creating a 'fishing-tool', "
                       "maybe this can be used for something?"
                       "\n'fishing-tool' has been added to your inventory.")
                 inventory.remove('magnet')
                 inventory.remove('rope')
                 inventory.append('fishing-tool')
             else:
-                print("You take out the magnet, but there doesn't seem to be anything you can do with it.")
+                print("You take out the 'magnet', but there doesn't seem to be anything you can do with it.")
         elif objectName == 'rope':
             if room == 3:
-                print("You throw the rope over the wall but getting the key seems impossible.")
+                print("You throw the 'rope' over the wall but getting the key seems impossible.")
             else:
-                print("You take out the rope but there's nothing you can do with it.")
+                print("You take out the 'rope' but there's nothing you can do with it.")
         elif objectName == 'fishing-tool':
             if room == 3:
-                print("You throw your self-made fishing-tool over the wall, they key sticks to it and you slowly "
+                print("You throw your self-made 'fishing-tool' over the wall, the key sticks to it and you slowly "
                       "fish it up over the wall!"
                       "\n'wet-key' has been added to your inventory.")
                 inventory.append('wet-key')
@@ -483,37 +539,82 @@ def anvand(objectName, inventory, room, item=0):
               |_______|__==__________|
               """)
             else:
-                print("You swing your fishing-tool around but nothing happens.")
+                print("You swing your 'fishing-tool' around but nothing happens.")
         elif objectName == 'wet-key':
             if room == 3:
-                print("You put the wet-key into the lock and the door opens!"
+                print("You put the 'wet-key' into the lock and the door opens!"
                       "\nDoor 4 has now been unlocked.")
                 inventory.remove('wet-key')
                 item = 1
             else:
                 print("This key can only be used on the door in room 4!")
+        elif objectName == 'clock-battery':
+            if 'UV-light' in inventory and item == 0:
+                print("You put the 'clock-battery' into the 'UV-light'.")
+                inventory.remove('clock-battery')
+                item = 1
+            elif 'UV-light' in inventory and item == 2:
+                print("You put the 'clock-battery' into the 'UV-light', making it full.")
+                inventory.remove('clock-battery')
+                item = 3
+            else:
+                print("There is nothing to put the clock-battery in!")
+        elif objectName == 'lamp-battery':
+            if 'UV-light' in inventory and item == 0:
+                print("You put the 'lamp-battery' into the UV-light.")
+                inventory.remove('lamp-battery')
+                item = 2
+            elif 'UV-light' in inventory and item == 1:
+                print("You put the 'lamp-battery' into the UV-light, making it full.")
+                inventory.remove('lamp-battery')
+                item = 3
+            else:
+                print("There is nothing to put the lamp-battery in!")
+        elif objectName == 'UV-light':
+            if item == 1 or item == 2:
+                print("You turn on the 'UV-light' and it flickers for a second, then nothing happens...")
+            elif item == 3 and 'note' not in inventory:
+                print("The 'UV-light' turns on but there is nothing to use it on!")
+            elif item == 3 and 'note' in inventory:
+                print("You turn on the 'UV-light' and light it onto the 'note' in your inventory and a secret "
+                      "message shows up! It says nothing but: 5987")
+            else:
+                print("You try to turn on the UV-light but nothing happens because there are no batteries inside of it.")
         else:
             print("This item doesn't do anything.")
     else:
         print("There is no such item in your inventory!")
-    if item == 1:
+    if item >= 1:
         return(item)
+    else:
+        return(0)
 
 def padlock(room, padlockStatus):
     """
     Unlocks a padlock if the user inputs the right digits.
     """
-    if padlockStatus == 1:
-        print("This padlock is already unlocked!")
-    elif room == 0:
-        digits = input("Please type a four-number combination: ")
-        if digits == '0000':
-            print("Door 1 has now been unlocked! To go to the next room type 'fr' or 'fram'.")
-            padlockStatus = 1
+    if room == 0:
+        if padlockStatus == 1:
+            print("This padlock is already unlocked!")
         else:
-            print("The combination didn't work! Maybe there is a clue somewhere?")
-            padlockStatus = 0
-
+            digits = input("Please type a four-number combination: ")
+            if digits == '0000':
+                print("Door 1 has now been unlocked! To go to the next room type 'fr' or 'fram'.")
+                padlockStatus = 1
+            else:
+                print("The combination didn't work! Maybe there is a clue somewhere?")
+                padlockStatus = 0
+    elif room == 4:
+        if padlockStatus == 1:
+            print("This padlock is already unlocked!")
+        else:
+            digits = input("Please type a four-number combination: ")
+            if digits == '5987':
+                print("Door 5 has now been unlocked!")
+                padlockStatus = 1
+            else:
+                print("The combination didn't work! Maybe there is a clue somewhere?")
+                padlockStatus = 0
     return(padlockStatus)
 
 def roomSelector(currentRoom, inventory=[], item=0, extraItem=0):
@@ -613,6 +714,19 @@ def roomSelector(currentRoom, inventory=[], item=0, extraItem=0):
               |_______|__==__________|
               """)
         roomInfo(currentRoom)
+    elif currentRoom == 4 and 'UV-light' in inventory:
+        print("""
+                        Room 5
+               __________==__________
+              |                      |
+              |                      |
+              |_                    <|
+              | |                    |
+              |                     <|
+              |                      |
+              |__________==__________|
+              """)
+        roomInfo(currentRoom)
     elif currentRoom == 4:
         print("""
                         Room 5
@@ -620,7 +734,7 @@ def roomSelector(currentRoom, inventory=[], item=0, extraItem=0):
               |                      |
               |                      |
               |_                    <|
-              |_|     UV-Light       |
+              |x|                    |
               |                     <|
               |                      |
               |__________==__________|
@@ -661,10 +775,11 @@ def mainGame():
     currentRoom = 0
     clueCount = 0
     padlock1 = 0
-    padlock5 = 0
+    padlock2 = 0
     rustyKey = 0
     stereoMagnet = 0
     wetKey = 0
+    uvLight = 0
     inventory = []
 
     print("\nWelcome to this mysterious adventure! Tell Marvin 'h' or 'hjälp' to get a list of all available commands. "
@@ -694,6 +809,8 @@ def mainGame():
                 currentRoom = fram(currentRoom, inventory, stereoMagnet, wetKey)
             elif currentRoom == 3:
                 currentRoom = fram(currentRoom, inventory, wetKey)
+            elif currentRoom == 4:
+                currentRoom = fram(currentRoom, inventory, padlock2)
             else:
                 currentRoom = fram(currentRoom, inventory)
             clueCount = 0
@@ -712,6 +829,8 @@ def mainGame():
                 se(currentRoom, inventory, stereoMagnet)
             elif currentRoom == 3:
                 se(currentRoom, inventory, wetKey)
+            elif currentRoom == 4:
+                se(currentRoom, inventory, uvLight)
             else:
                 se(currentRoom)
         elif 'l' in command.split() or 'ledtråd' in command.split():
@@ -746,18 +865,30 @@ def mainGame():
             if 'padlock' in command and currentRoom == 0:
                 padlock1 = padlock(currentRoom, padlock1)
             elif 'padlock' in command and currentRoom == 4:
-                padlock5 = padlock(currentRoom, padlock5)
+                padlock2 = padlock(currentRoom, padlock2)
             elif 'stereo' in command and currentRoom == 2:
                 oppna(command[2:len(command)], currentRoom, inventory, stereoMagnet)
+            elif 'closet' in command and currentRoom == 4:
+                oppna(command[2:len(command)], currentRoom, inventory, uvLight)
+            elif 'UV-light' in command and currentRoom == 4:
+                oppna(command[2:len(command)], currentRoom, inventory, uvLight)
+            elif 'clock' in command and currentRoom == 4:
+                oppna(command[2:len(command)], currentRoom, inventory, uvLight)
             else:
                 oppna(command[2:len(command)], currentRoom, inventory)
         elif 'öppna ' in command:
             if 'padlock' in command and currentRoom == 0:
                 padlock1 = padlock(currentRoom, padlock1)
             elif 'padlock' in command and currentRoom == 4:
-                padlock5 = padlock(currentRoom, padlock5)
+                padlock2 = padlock(currentRoom, padlock2)
             elif 'stereo' in command and currentRoom == 2:
                 oppna(command[6:len(command)], currentRoom, inventory, stereoMagnet)
+            elif 'closet' in command and currentRoom == 4:
+                oppna(command[6:len(command)], currentRoom, inventory, uvLight)
+            elif 'UV-light' in command and currentRoom == 4:
+                oppna(command[6:len(command)], currentRoom, inventory, uvLight)
+            elif 'clock' in command and currentRoom == 4:
+                oppna(command[6:len(command)], currentRoom, inventory, uvLight)
             else:
                 oppna(command[6:len(command)], currentRoom, inventory)
         elif 's ' in command:
@@ -790,6 +921,12 @@ def mainGame():
                 stereoMagnet = anvand(command[2:len(command)], inventory, currentRoom, stereoMagnet)
             elif 'wet-key' in command and currentRoom == 3:
                 wetKey = anvand(command[2:len(command)], inventory, currentRoom, wetKey)
+            elif 'clock-battery' in command:
+                uvLight = anvand(command[2:len(command)], inventory, currentRoom, uvLight)
+            elif 'lamp-battery' in command:
+                uvLight = anvand(command[2:len(command)], inventory, currentRoom, uvLight)
+            elif 'UV-light' in command:
+                uvLight = anvand(command[2:len(command)], inventory, currentRoom, uvLight)
             else:
                 anvand(command[2:len(command)], inventory, currentRoom)
         elif 'använd ' in command:
@@ -799,6 +936,12 @@ def mainGame():
                 stereoMagnet = anvand(command[7:len(command)], inventory, currentRoom, stereoMagnet)
             elif 'wet-key' in command and currentRoom == 3:
                 wetKey = anvand(command[7:len(command)], inventory, currentRoom, wetKey)
+            elif 'clock-battery' in command:
+                uvLight = anvand(command[7:len(command)], inventory, currentRoom, uvLight)
+            elif 'lamp-battery' in command:
+                uvLight = anvand(command[7:len(command)], inventory, currentRoom, uvLight)
+            elif 'UV-light' in command:
+                uvLight = anvand(command[7:len(command)], inventory, currentRoom, uvLight)
             else:
                 anvand(command[7:len(command)], inventory, currentRoom)
         else:
