@@ -71,7 +71,8 @@ def roomInfo(room):
         print("The fifth room is just as uninviting as the ones before it. No windows, stone walls, it's another "
               "room that could very well be likened to a prison cell. How will you escape?")
     elif room == 5:
-        print("This is room 6.")
+        print("The sixth room surprisingly has a tiny window, unfortunately it's too dark outside to see anything. "
+              "Maybe it's the middle of the night?")
     elif room == 6:
         print("This is room 7.")
 
@@ -118,7 +119,7 @@ def fram(currentRoom, inventory, item=0, extraItem=0):
     elif currentRoom == 4 and item == 1:
         currentRoom = currentRoom + 1
         roomSelector(currentRoom)
-    elif currentRoom == 5 and 'key6' in inventory:
+    elif currentRoom == 5 and item == 1:
         currentRoom = currentRoom + 1
         roomSelector(currentRoom)
     elif currentRoom == 6 and 'key7' in inventory:
@@ -145,6 +146,8 @@ def bak(currentRoom, inventory, item=[], extraItem=[]):
         elif 'rope' in inventory:
             roomSelector(currentRoom, inventory)
         elif 'UV-light' in inventory:
+            roomSelector(currentRoom, inventory)
+        elif 'modern-key' in inventory:
             roomSelector(currentRoom, inventory)
         else:
             roomSelector(currentRoom)
@@ -197,7 +200,7 @@ def se(room, inventory=[], item=0):
             print("Looking around the room you see two objects hanging on the wall, "
                   "a wooden 'closet', and an unlocked door.")
     elif room == 5:
-        print("In room 6 there is...")
+            print("There is some kind of machine, with a box connected to it. Other than that there is a lock requiring a key.")
     elif room == 6:
         print("In room 7 there is...")
 
@@ -289,7 +292,7 @@ def objects(room, inventory=[], item=0):
         print("In this room there is a 'lamp' and a 'clock' hanging on the wall, on the opposite side there is a 'closet' "
               "and finally there is a 'padlock'.")
     elif room == 5:
-        print("In room 6 there is...")
+        print("In this room there is a 'cipher-lock' protecting something, and a normal 'lock' on the exit door.")
     elif room == 6:
         print("In room 7 there is...")
 
@@ -346,6 +349,8 @@ def titta(objectName, room, inventory=[], item=0):
         print("A wooden closet, it looks old.")
     elif objectName == 'UV-light':
         print("A UV flashlight, it seeems to take two batteries.")
+    elif objectName == 'cipher-lock' and room == 5:
+        print("A cipher lock, requiring you to solve a Caesar-cipher.")
     else:
         print("There is no such object!")
 
@@ -740,6 +745,18 @@ def roomSelector(currentRoom, inventory=[], item=0, extraItem=0):
               |__________==__________|
               """)
         roomInfo(currentRoom)
+    elif currentRoom == 5 and 'modern-key' in inventory:
+        print("""
+                        Room 6
+               __________==__________
+              |                      |
+              |                      |
+              |                      |
+              |                      |   
+              |                  _   |
+              |                 | |  |
+              |__________==__________|
+              """)
     elif currentRoom == 5:
         print("""
                         Room 6
@@ -747,9 +764,9 @@ def roomSelector(currentRoom, inventory=[], item=0, extraItem=0):
               |                      |
               |                      |
               |                      |
-              |  Schiffer            |   
+              |                      |   
               |                  _   |
-              |                 |_|  |
+              |                 |x|  |
               |__________==__________|
               """)
         roomInfo(currentRoom)
@@ -780,6 +797,8 @@ def mainGame():
     stereoMagnet = 0
     wetKey = 0
     uvLight = 0
+    decrypter = 0
+    decryptLock = 0
     inventory = []
 
     print("\nWelcome to this mysterious adventure! Tell Marvin 'h' or 'hjälp' to get a list of all available commands. "
@@ -811,6 +830,8 @@ def mainGame():
                 currentRoom = fram(currentRoom, inventory, wetKey)
             elif currentRoom == 4:
                 currentRoom = fram(currentRoom, inventory, padlock2)
+            elif currentRoom == 5:
+                currentRoom = fram(currentRoom, inventory, decryptLock)
             else:
                 currentRoom = fram(currentRoom, inventory)
             clueCount = 0
