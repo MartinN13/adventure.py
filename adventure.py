@@ -8,6 +8,7 @@ import sys
 import getopt
 import ticTacToe
 import requests
+import random
 
 def usage():
     """
@@ -795,7 +796,9 @@ def decrypt():
     """
     Decrypt a Ceasarscipher the hard way.
     """
-    message = input("Please input your message (a-Z): ")
+    url = 'https://raw.githubusercontent.com/MartinN13/adventure.py/master/words.txt'
+    message = requests.get(url)
+
 
     letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     lettersLower = 'abcdefghijklmnopqrstuvwxyz'
@@ -832,8 +835,15 @@ def decrypt():
         wordList[key] = translated
         print("%s) %s" % (key, translated))
         key = key + 1
-    choice = input("Please input the number of the correct message: ")
-    print("The correct message, which you chose, was: %s." % wordList[int(choice)])
+    choice = input("Guess the correct number: ")
+    if choice == 18:
+        print("You guessed right! The lock opens up and inside you find a 'modern-key'")
+        inventory.append('modern-key')
+        return(1)
+    else:
+        print("ERROR! WRONG KEY!")
+        return(0)
+
 
 def mainGame():
     """
