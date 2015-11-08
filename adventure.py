@@ -7,6 +7,7 @@ An adventure game.
 import sys
 import getopt
 import ticTacToe
+import requests
 
 def usage():
     """
@@ -152,6 +153,168 @@ def bak(currentRoom, inventory, item=[], extraItem=[]):
         else:
             roomSelector(currentRoom)
     return(currentRoom)
+
+def roomSelector(currentRoom, inventory=[], item=0, extraItem=0):
+    """
+    Prints the users current room.
+    """
+    if currentRoom == 0 and 'note' in inventory:
+        print("""
+                        Room 1
+               ______________________
+              |                      |
+              |                      |
+              |                      |
+              |                      |
+              |  _                   |
+              | | |                  |
+              |__________==__________|
+              """)
+        roomInfo(currentRoom)
+    elif currentRoom == 0:
+        print("""
+                        Room 1
+               ______________________
+              |                      |
+              |                      |
+              |                      |
+              |                      |
+              |  _                   |
+              | |x|                  |
+              |__________==__________|
+              """)
+        roomInfo(currentRoom)
+    elif currentRoom == 1:
+        print("""
+                        Room 2
+               __________==__________
+              |                      |
+              |   x                  |
+              |                      |
+              |                      |
+              |     x               x|
+              |                      |
+              |__________==__________|
+              """)
+        roomInfo(currentRoom)
+    elif currentRoom == 2:
+        print("""
+                        Room 3
+               __________==__________
+              |                      |
+              |                      |
+              |                      |
+              |                      |
+              |  x                   |
+              |                      |
+              |__________==__________|
+              """)
+        roomInfo(currentRoom)
+    elif currentRoom == 3 and 'wet-key' in inventory or \
+         currentRoom == 3 and extraItem == 1:
+        print("""
+                        Room 4
+               __________==__________
+              |       |              |
+              |       |              |
+              |       |              |
+              |       |              |
+              |       |             _|
+              |       |            | |
+              |_______|__==__________|
+              """)
+        roomInfo(currentRoom)
+    elif currentRoom == 3 and 'rope' in inventory or \
+         currentRoom == 3 and 'fishing-tool' in inventory:
+        print("""
+                        Room 4
+               __________==__________
+              |       |              |
+              |       |              |
+              |       |              |
+              |    x  |              |
+              |       |             _|
+              |       |            | |
+              |_______|__==__________|
+              """)
+        roomInfo(currentRoom)
+    elif currentRoom == 3:
+        print("""
+                        Room 4
+               __________==__________
+              |       |              |
+              |       |              |
+              |       |              |
+              |    x  |              |
+              |       |             _|
+              |       |            |x|
+              |_______|__==__________|
+              """)
+        roomInfo(currentRoom)
+    elif currentRoom == 4 and 'UV-light' in inventory:
+        print("""
+                        Room 5
+               __________==__________
+              |                      |
+              |                      |
+              |_                    <|
+              | |                    |
+              |                     <|
+              |                      |
+              |__________==__________|
+              """)
+        roomInfo(currentRoom)
+    elif currentRoom == 4:
+        print("""
+                        Room 5
+               __________==__________
+              |                      |
+              |                      |
+              |_                    <|
+              |x|                    |
+              |                     <|
+              |                      |
+              |__________==__________|
+              """)
+        roomInfo(currentRoom)
+    elif currentRoom == 5 and 'modern-key' in inventory:
+        print("""
+                        Room 6
+               __________==__________
+              |                      |
+              |                      |
+              |                      |
+              |                      |   
+              |                  _   |
+              |                 | |  |
+              |__________==__________|
+              """)
+    elif currentRoom == 5:
+        print("""
+                        Room 6
+               __________==__________
+              |                      |
+              |                      |
+              |                      |
+              |                      |   
+              |                  _   |
+              |                 |x|  |
+              |__________==__________|
+              """)
+        roomInfo(currentRoom)
+    elif currentRoom == 6:
+        print("""
+                        Room 7
+               __________==__________
+              |                      |
+              |     _                |
+              |    | |               |
+              |    |x|    ticTacToe  |
+              |    |_|               |
+              |                      |
+              |_________====_________|
+              """)
+        roomInfo(currentRoom)
 
 def se(room, inventory=[], item=0):
     """
@@ -398,6 +561,12 @@ def oppna(objectName, room, inventory, item=[]):
             print("You lift the lamp off the wall and find one single AA 'lamp-battery'!")
             print("\n'lamp-battery' has been added to your inventory.")
             inventory.append('lamp-battery')
+    elif objectName == 'cipher-lock' and room == 5:
+        if item == 1:
+            print("You check the box once again but there is nothing to be found!")
+        else:
+            item = decrypt()
+            return(decrypt)
     else:
         print("This object doesn't exist or it can't be opened!")
     
@@ -622,168 +791,49 @@ def padlock(room, padlockStatus):
                 padlockStatus = 0
     return(padlockStatus)
 
-def roomSelector(currentRoom, inventory=[], item=0, extraItem=0):
+def decrypt():
     """
-    Prints the users current room.
+    Decrypt a Ceasarscipher the hard way.
     """
-    if currentRoom == 0 and 'note' in inventory:
-        print("""
-                        Room 1
-               ______________________
-              |                      |
-              |                      |
-              |                      |
-              |                      |
-              |  _                   |
-              | | |                  |
-              |__________==__________|
-              """)
-        roomInfo(currentRoom)
-    elif currentRoom == 0:
-        print("""
-                        Room 1
-               ______________________
-              |                      |
-              |                      |
-              |                      |
-              |                      |
-              |  _                   |
-              | |x|                  |
-              |__________==__________|
-              """)
-        roomInfo(currentRoom)
-    elif currentRoom == 1:
-        print("""
-                        Room 2
-               __________==__________
-              |                      |
-              |   x                  |
-              |                      |
-              |                      |
-              |     x               x|
-              |                      |
-              |__________==__________|
-              """)
-        roomInfo(currentRoom)
-    elif currentRoom == 2:
-        print("""
-                        Room 3
-               __________==__________
-              |                      |
-              |                      |
-              |                      |
-              |                      |
-              |  x                   |
-              |                      |
-              |__________==__________|
-              """)
-        roomInfo(currentRoom)
-    elif currentRoom == 3 and 'wet-key' in inventory or \
-         currentRoom == 3 and extraItem == 1:
-        print("""
-                        Room 4
-               __________==__________
-              |       |              |
-              |       |              |
-              |       |              |
-              |       |              |
-              |       |             _|
-              |       |            | |
-              |_______|__==__________|
-              """)
-        roomInfo(currentRoom)
-    elif currentRoom == 3 and 'rope' in inventory or \
-         currentRoom == 3 and 'fishing-tool' in inventory:
-        print("""
-                        Room 4
-               __________==__________
-              |       |              |
-              |       |              |
-              |       |              |
-              |    x  |              |
-              |       |             _|
-              |       |            | |
-              |_______|__==__________|
-              """)
-        roomInfo(currentRoom)
-    elif currentRoom == 3:
-        print("""
-                        Room 4
-               __________==__________
-              |       |              |
-              |       |              |
-              |       |              |
-              |    x  |              |
-              |       |             _|
-              |       |            |x|
-              |_______|__==__________|
-              """)
-        roomInfo(currentRoom)
-    elif currentRoom == 4 and 'UV-light' in inventory:
-        print("""
-                        Room 5
-               __________==__________
-              |                      |
-              |                      |
-              |_                    <|
-              | |                    |
-              |                     <|
-              |                      |
-              |__________==__________|
-              """)
-        roomInfo(currentRoom)
-    elif currentRoom == 4:
-        print("""
-                        Room 5
-               __________==__________
-              |                      |
-              |                      |
-              |_                    <|
-              |x|                    |
-              |                     <|
-              |                      |
-              |__________==__________|
-              """)
-        roomInfo(currentRoom)
-    elif currentRoom == 5 and 'modern-key' in inventory:
-        print("""
-                        Room 6
-               __________==__________
-              |                      |
-              |                      |
-              |                      |
-              |                      |   
-              |                  _   |
-              |                 | |  |
-              |__________==__________|
-              """)
-    elif currentRoom == 5:
-        print("""
-                        Room 6
-               __________==__________
-              |                      |
-              |                      |
-              |                      |
-              |                      |   
-              |                  _   |
-              |                 |x|  |
-              |__________==__________|
-              """)
-        roomInfo(currentRoom)
-    elif currentRoom == 6:
-        print("""
-                        Room 7
-               __________==__________
-              |                      |
-              |     _                |
-              |    | |               |
-              |    |x|    ticTacToe  |
-              |    |_|               |
-              |                      |
-              |_________====_________|
-              """)
-        roomInfo(currentRoom)
+    message = input("Please input your message (a-Z): ")
 
+    letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    lettersLower = 'abcdefghijklmnopqrstuvwxyz'
+    key = 1
+    wordList = {}
+
+    while key <= 25:
+        translated = ""
+
+        for char in message:
+            if char in letters:
+                num = letters.find(char)
+                num = num + key
+    
+                if num >= len(letters):
+                    num = num - len(letters)
+                elif num < 0:
+                    num = num + len(letters)
+    
+                translated = translated + letters[num]
+            elif char in lettersLower:
+                num = lettersLower.find(char)
+                num = num + key
+    
+                if num >= len(lettersLower):
+                    num = num - len(lettersLower)
+                elif num < 0:
+                    num = num + len(lettersLower)
+    
+                translated = translated + lettersLower[num]
+            else:
+                translated = translated + char
+
+        wordList[key] = translated
+        print("%s) %s" % (key, translated))
+        key = key + 1
+    choice = input("Please input the number of the correct message: ")
+    print("The correct message, which you chose, was: %s." % wordList[int(choice)])
 
 def mainGame():
     """
