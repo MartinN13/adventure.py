@@ -120,10 +120,10 @@ def fram(currentRoom, inventory, item=0, extraItem=0):
         roomSelector(currentRoom, inventory)
     elif currentRoom == 4 and item == 1:
         currentRoom = currentRoom + 1
-        roomSelector(currentRoom)
+        roomSelector(currentRoom, inventory, item, extraItem)
     elif currentRoom == 5 and item == 1:
         currentRoom = currentRoom + 1
-        roomSelector(currentRoom)
+        roomSelector(currentRoom, inventory, item, extraItem)
     elif currentRoom == 6 and 'key7' in inventory:
         currentRoom = currentRoom + 1
         roomSelector(currentRoom)
@@ -149,8 +149,8 @@ def bak(currentRoom, inventory, item=[], extraItem=[]):
             roomSelector(currentRoom, inventory)
         elif 'UV-light' in inventory:
             roomSelector(currentRoom, inventory)
-        elif 'modern-key' in inventory:
-            roomSelector(currentRoom, inventory)
+        elif 'modern-key' in inventory or extraItem == 1:
+            roomSelector(currentRoom, inventory, item, extraItem)
         else:
             roomSelector(currentRoom)
     return(currentRoom)
@@ -159,6 +159,7 @@ def roomSelector(currentRoom, inventory=[], item=0, extraItem=0):
     """
     Prints the users current room.
     """
+    print("extraitem is %s" % extraItem)
     if currentRoom == 0 and 'note' in inventory:
         print("""
                         Room 1
@@ -278,7 +279,8 @@ def roomSelector(currentRoom, inventory=[], item=0, extraItem=0):
               |__________==__________|
               """)
         roomInfo(currentRoom)
-    elif currentRoom == 5 and 'modern-key' in inventory:
+    elif currentRoom == 5 and 'modern-key' in inventory or \
+         currentRoom == 5 and extraItem == 1:
         print("""
                         Room 6
                __________==__________
@@ -497,13 +499,13 @@ def titta(objectName, room, inventory=[], item=0):
         print("A boombox-style stereo. It doesn't seem to work.")
     elif objectName == 'lock' and room == 2:
         print("A digital lock, which doesn't seem to take either a code nor a key!")
-    elif objectName == 'magnet':
+    elif objectName == 'magnet' and 'magnet' in inventory:
         print("A small magnet, taken from a speaker.")
     elif objectName == 'rope' and room == 3:
         print("A sturdy rope, about 6 meters long.")
-    elif objectName == 'fishing-tool':
+    elif objectName == 'fishing-tool' and 'fishing-tool' in inventory:
         print("A magnet tied to the end of a rope, effectively becoming a fishing tool.")
-    elif objectName == 'wet-key' and room == 3:
+    elif objectName == 'wet-key':
         print("A wet key with water dripping from it.")
     elif objectName == 'lamp' and room == 4:
         print("A lamp hanging from the wall, it seems to be battery powered.")
@@ -513,8 +515,14 @@ def titta(objectName, room, inventory=[], item=0):
         print("A wooden closet, it looks old.")
     elif objectName == 'UV-light':
         print("A UV flashlight, it seeems to take two batteries.")
+    elif objectName == 'clock-battery' and 'clock-battery' in inventory:
+        print("An AA-type battery taken from a clock.")
+    elif objectName == 'lamp-battery' and 'lamp-battery' in inventory:
+        print("An AA-type battery taken from a lamp.")
     elif objectName == 'cipher-lock' and room == 5:
         print("A cipher lock, requiring you to solve a Caesar-cipher.")
+    elif objectName == 'modern-key' and 'modern-key' in inventory:
+        print("A modern key, made out of stainless steel.")
     else:
         print("There is no such object!")
 
@@ -566,8 +574,8 @@ def oppna(objectName, room, inventory, item=[]):
         if item == 1:
             print("You check the box once again but there is nothing to be found!")
         else:
-            item = decrypt()
-            return(decrypt)
+            item = decrypt(inventory)
+            return(item)
     else:
         print("This object doesn't exist or it can't be opened!")
     
@@ -755,6 +763,14 @@ def anvand(objectName, inventory, room, item=0):
                       "message shows up! It says nothing but: 5987")
             else:
                 print("You try to turn on the UV-light but nothing happens because there are no batteries inside of it.")
+        elif objectName == 'modern-key':
+            if room == 5:
+                print("You put the 'modern-key' into the lock, and it works!"
+                      "\nDoor 6 has now been unlocked.")
+                inventory.remove('modern-key')
+                item = 1
+            else:
+                print("This key can only be used in room 6!")
         else:
             print("This item doesn't do anything.")
     else:
@@ -792,12 +808,13 @@ def padlock(room, padlockStatus):
                 padlockStatus = 0
     return(padlockStatus)
 
-def decrypt():
+def decrypt(inventory):
     """
     Decrypt a Ceasarscipher the hard way.
     """
     url = 'https://raw.githubusercontent.com/MartinN13/adventure.py/master/words.txt'
     message = requests.get(url)
+    message = message.text
 
 
     letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -836,14 +853,25 @@ def decrypt():
         print("%s) %s" % (key, translated))
         key = key + 1
     choice = input("Guess the correct number: ")
-    if choice == 18:
-        print("You guessed right! The lock opens up and inside you find a 'modern-key'")
+    if choice == '18':
+        print("\nYou guessed right! The lock opens up and inside you find a 'modern-key'")
+        print("\n'modern-key' has been added to your inventory.")
         inventory.append('modern-key')
+        print("""
+                        Room 6
+               __________==__________
+              |                      |
+              |                      |
+              |                      |
+              |                      |   
+              |                  _   |
+              |                 | |  |
+              |__________==__________|
+              """)
         return(1)
     else:
-        print("ERROR! WRONG KEY!")
+        print("\nERROR! WRONG KEY!")
         return(0)
-
 
 def mainGame():
     """
@@ -889,15 +917,17 @@ def mainGame():
             elif currentRoom == 3:
                 currentRoom = fram(currentRoom, inventory, wetKey)
             elif currentRoom == 4:
-                currentRoom = fram(currentRoom, inventory, padlock2)
+                currentRoom = fram(currentRoom, inventory, padlock2, decrypter)
             elif currentRoom == 5:
-                currentRoom = fram(currentRoom, inventory, decryptLock)
+                currentRoom = fram(currentRoom, inventory, decryptLock, decrypter)
             else:
                 currentRoom = fram(currentRoom, inventory)
             clueCount = 0
         elif 'ba' in command.split() or 'bak' in command.split():
             if currentRoom == 4:
                 currentRoom = bak(currentRoom, inventory, wetKey, 1)
+            elif currentRoom == 6:
+                currentRoom = bak(currentRoom, inventory, decryptLock, decrypter)
             else:
                 currentRoom = bak(currentRoom, inventory)
             clueCount = 0
@@ -929,19 +959,15 @@ def mainGame():
             else:
                 objects(currentRoom)
         elif 't ' in command:
-            if currentRoom == 0:
-                titta(command[2:len(command)], currentRoom, inventory)
-            elif currentRoom == 1:
+            if currentRoom == 1:
                 titta(command[2:len(command)], currentRoom, inventory, rustyKey)
             else:
-                titta(command[2:len(command)], currentRoom)
+                titta(command[2:len(command)], currentRoom, inventory)
         elif 'titta ' in command:
-            if currentRoom == 0:
-                titta(command[6:len(command)], currentRoom, inventory)
-            elif currentRoom == 1:
+            if currentRoom == 1:
                 titta(command[6:len(command)], currentRoom, inventory, rustyKey)
             else:
-                titta(command[6:len(command)], currentRoom)
+                titta(command[6:len(command)], currentRoom, inventory)
         elif 'ö ' in command:
             if 'padlock' in command and currentRoom == 0:
                 padlock1 = padlock(currentRoom, padlock1)
@@ -955,6 +981,8 @@ def mainGame():
                 oppna(command[2:len(command)], currentRoom, inventory, uvLight)
             elif 'clock' in command and currentRoom == 4:
                 oppna(command[2:len(command)], currentRoom, inventory, uvLight)
+            elif 'cipher-lock' in command and currentRoom == 5:
+                decrypter = oppna(command[2:len(command)], currentRoom, inventory, decrypter)
             else:
                 oppna(command[2:len(command)], currentRoom, inventory)
         elif 'öppna ' in command:
@@ -970,6 +998,8 @@ def mainGame():
                 oppna(command[6:len(command)], currentRoom, inventory, uvLight)
             elif 'clock' in command and currentRoom == 4:
                 oppna(command[6:len(command)], currentRoom, inventory, uvLight)
+            elif 'cipher-lock' in command and currentRoom == 5:
+                decrypter = oppna(command[6:len(command)], currentRoom, inventory, decrypter)
             else:
                 oppna(command[6:len(command)], currentRoom, inventory)
         elif 's ' in command:
@@ -1008,6 +1038,8 @@ def mainGame():
                 uvLight = anvand(command[2:len(command)], inventory, currentRoom, uvLight)
             elif 'UV-light' in command:
                 uvLight = anvand(command[2:len(command)], inventory, currentRoom, uvLight)
+            elif 'modern-key' in command:
+                decryptLock = anvand(command[2:len(command)], inventory, currentRoom, decryptLock)
             else:
                 anvand(command[2:len(command)], inventory, currentRoom)
         elif 'använd ' in command:
@@ -1023,6 +1055,8 @@ def mainGame():
                 uvLight = anvand(command[7:len(command)], inventory, currentRoom, uvLight)
             elif 'UV-light' in command:
                 uvLight = anvand(command[7:len(command)], inventory, currentRoom, uvLight)
+            elif 'modern-key' in command:
+                decryptLock = anvand(command[7:len(command)], inventory, currentRoom, decryptLock)
             else:
                 anvand(command[7:len(command)], inventory, currentRoom)
         else:
