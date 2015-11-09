@@ -8,7 +8,8 @@ import sys
 import getopt
 import ticTacToe
 import requests
-import random
+import json
+import os
 
 def usage():
     """
@@ -31,7 +32,8 @@ def info():
     print("\nThe idea for this game came from having played a lot of escape-games as "
           "a child. Especially 'Mysteriet på greveholm' (an escape-game based on a Swedish TV-series "
           "of the same name) brings back fond memories. The basic premise is of you and a stranger named "
-          "Marvin waking up in a mysterious castle and having to solve various problems to escape this cold, damp place.\n")
+          "Marvin waking up in a mysterious castle and having to solve various problems "
+          "to escape this cold, damp place.\n")
 
 def version():
     """
@@ -50,14 +52,20 @@ def cheat():
     """
     Prints instructions how to beat the game quickly.
     """
-    print("\nTo cheat...\n")
+    print("""\nThere are two ways to cheat.
+\nTo load the finished game tell Marvin 'motherlode'
+\nThe shortest way of winning the game is the following (each command separated with a comma):
+\nö padlock, 0000, fr, s vase, a rusty-key, fr, ö stereo, a magnet, fr,
+ta rope, a magnet, a fishing-tool, a wet-key, fr, ö padlock, 5987, fr,
+ö cipher-lock, 18, a modern-key, fr, ö game, 1, 1, 2, 0, 0, 1, 1, 0, 2, 2, fr\n""")
 
 def roomInfo(room):
     """
     Describes the current room.
     """
     if room == 0:
-        print("A cold, stone-tiled room looking as if it belongs to an old medieval castle presents itself in front of you. "
+        print("A cold, stone-tiled room looking as if it belongs to an old medieval castle "
+              "presents itself in front of you. "
               "There are no windows and there seems to be no other way to escape but through the main door.")
     elif room == 1:
         print("Another stone-tiled room. There are no windows and a single door leading further ahead. "
@@ -76,7 +84,8 @@ def roomInfo(room):
         print("The sixth room surprisingly has a tiny window, unfortunately it's too dark outside to see anything. "
               "Maybe it's the middle of the night?")
     elif room == 6:
-        print("This is room 7.")
+        print("The seventh and final room. There is a big door which seems to be the main entrance of the castle! "
+              "Other than that this room, like all the other, has stone-tiled walls and a very dark atmosphere.")
 
 def hjalp():
     """
@@ -99,8 +108,11 @@ f [object], flytta [object] - Moves [object], if p
 
 inv, inventarier - Tells you what's in your inventory.
 ta [object] - Adds [object] to inventory, if possible.
-sl [object], släpp [object] - Drops [object], if in inventory.
-a [object], använd [object] - Uses [object], if possible.""")
+sl [object], släpp [object] - Drops [object], if in inventory and if possible.
+a [object], använd [object] - Uses [object], if possible.
+
+save [filename] - Saves your game to [filename].
+load [filename] - Loads a game using [filename].""")
 
 def fram(currentRoom, inventory, item=0, extraItem=0):
     """
@@ -114,25 +126,24 @@ def fram(currentRoom, inventory, item=0, extraItem=0):
         roomSelector(currentRoom)
     elif currentRoom == 2 and item == 1:
         currentRoom = currentRoom + 1
-        roomSelector(currentRoom, inventory, item, extraItem)
+        roomSelector(currentRoom, inventory, extraItem)
     elif currentRoom == 3 and item == 1:
         currentRoom = currentRoom + 1
         roomSelector(currentRoom, inventory)
     elif currentRoom == 4 and item == 1:
         currentRoom = currentRoom + 1
-        roomSelector(currentRoom, inventory, item, extraItem)
+        roomSelector(currentRoom, inventory, extraItem)
     elif currentRoom == 5 and item == 1:
         currentRoom = currentRoom + 1
-        roomSelector(currentRoom, inventory, item, extraItem)
-    elif currentRoom == 6 and 'key7' in inventory:
+        roomSelector(currentRoom, inventory, extraItem)
+    elif currentRoom == 6 and item == 1:
         currentRoom = currentRoom + 1
         roomSelector(currentRoom)
     else:
         print("You haven't unlocked the next room yet!")
+    return currentRoom
 
-    return(currentRoom)
-
-def bak(currentRoom, inventory, item=[], extraItem=[]):
+def bak(currentRoom, inventory, item=0, extraItem=0):
     """
     Go back one room.
     """ 
@@ -140,7 +151,7 @@ def bak(currentRoom, inventory, item=[], extraItem=[]):
         print("You are already in the first room!")
     elif currentRoom == 4 and item == 1:
         currentRoom = currentRoom - 1
-        roomSelector(currentRoom, inventory, item, extraItem)
+        roomSelector(currentRoom, inventory, extraItem)
     else:
         currentRoom = currentRoom - 1
         if 'note' in inventory:
@@ -150,16 +161,17 @@ def bak(currentRoom, inventory, item=[], extraItem=[]):
         elif 'UV-light' in inventory:
             roomSelector(currentRoom, inventory)
         elif 'modern-key' in inventory or extraItem == 1:
-            roomSelector(currentRoom, inventory, item, extraItem)
+            roomSelector(currentRoom, inventory, extraItem)
         else:
             roomSelector(currentRoom)
-    return(currentRoom)
+    return currentRoom
 
-def roomSelector(currentRoom, inventory=[], item=0, extraItem=0):
+def roomSelector(currentRoom, inventory=None, extraItem=0):
     """
     Prints the users current room.
     """
-    print("extraitem is %s" % extraItem)
+    if inventory == None:
+        inventory = []
     if currentRoom == 0 and 'note' in inventory:
         print("""
                         Room 1
@@ -312,20 +324,31 @@ def roomSelector(currentRoom, inventory=[], item=0, extraItem=0):
               |                      |
               |     _                |
               |    | |               |
-              |    |x|    ticTacToe  |
+              |    |x|               |
               |    |_|               |
               |                      |
               |_________====_________|
               """)
         roomInfo(currentRoom)
+    elif currentRoom == 7:
+        print("""
+                           You are free!!!!
+              _|_                  |                 _|_
+             //o//              |     |             //o//
+               |                 .---.                |
+              _|_______     --  |     |  --     ______|__
+                       `~^~^~^~^~^~^~^~^~^~^~^~`
+              """)
+        sys.exit()
 
-def se(room, inventory=[], item=0):
+def se(room, inventory=None, item=0):
     """
     Look around the room.
     """
     if room == 0:
         if 'note' not in inventory and item == 0:
-            print("Trying to escape you realize there's a locked 'padlock' on the door, requiring a four-digit passcode. "
+            print("Trying to escape you realize there's a locked 'padlock' on the door, "
+                  "requiring a four-digit passcode. "
                   "Marvin happens to notice a 'note' laying on the table in the lower-left corner of the room. "
                   "Maybe the 'note' has some clues as to where you are and how you can escape?")
         elif 'note' not in inventory and item == 1:
@@ -339,9 +362,11 @@ def se(room, inventory=[], item=0):
             print("Once again the door is locked. This time there is a lock requiring a key to unlock it. "
                   "There are multiple objects laying around in the room, maybe there is something hidden?")
         elif 'rusty-key' not in inventory and item == 1:
-            print("The door is unlocked and there are multiple objects laying around in the room, along with a broken vase.")
+            print("The door is unlocked and there are multiple objects laying around in the room, "
+                  "along with a broken vase.")
         elif 'rusty-key' in inventory and item == 0:
-            print("The door is locked and there are multiple objects laying around in the room, along with a broken vase.")
+            print("The door is locked and there are multiple objects laying around in the room, "
+                  "along with a broken vase.")
         else:
             print("The door is unlocked and there are multiple objects laying around in the room.")
     elif room == 2:
@@ -351,10 +376,12 @@ def se(room, inventory=[], item=0):
             print("The door has been unlocked and the stereo has been kicked to pieces.")
     elif room == 3:
         if 'rope' not in inventory and item == 0:
-            print("The door is locked, there is a 'rope' laying in the lower right corner, and there is a 'wet-key' at the "
+            print("The door is locked, there is a 'rope' laying in the lower right corner, "
+                  "and there is a 'wet-key' at the "
                   "bottom of the water on the other side of the glass! If only you could reach it...")
         elif 'rope' in inventory and item == 0:
-            print("The door is locked, and there is a 'wet-key' at the bottom of the water on the other side of the glass! "
+            print("The door is locked, and there is a 'wet-key' at the bottom of the water on "
+                  "the other side of the glass! "
                   "If only you could each it...")
         elif 'rope' in inventory and item == 1:
             print("The door has been unlocked, and there is nothing else left in the room.")
@@ -366,9 +393,11 @@ def se(room, inventory=[], item=0):
             print("Looking around the room you see two objects hanging on the wall, "
                   "a wooden 'closet', and an unlocked door.")
     elif room == 5:
-            print("There is some kind of machine, with a box connected to it. Other than that there is a lock requiring a key.")
+        print("There is some kind of machine, with a box connected to it. "
+              "Other than that there is a lock requiring a key.")
     elif room == 6:
-        print("In room 7 there is...")
+        print("Looking around you see two chairs, with a table in between. On the table there is some sort of game. "
+              "There is also a huge door which seems to be the main exit!")
 
 def ledtrad(room, clueCounter):
     """
@@ -413,15 +442,26 @@ def ledtrad(room, clueCounter):
             print("Is there anything with a battery in the room?")
         elif clueCounter == 2:
             print("If only there was some note or message you could use the UV-light on...")
+        else:
+            print("There are no more clues!")
     elif room == 5:
-        print("Clue 1 for room 6 is...")
+        if clueCounter == 0:
+            print("Maybe unlocking the 'cipher-lock' will help?")
+        elif clueCounter == 1:
+            print("The 'modern-key' might fit into the 'lock'?")
+        else:
+            print("There are no more clues!")
     elif room == 6:
-        print("Clue 1 for room 7 is...")
+        if clueCounter == 0:
+            print("There is a certain strategy that will win all the time.")
+        else:
+            print("There are no more clues!")
+
 
     clueCounter = clueCounter + 1
-    return(clueCounter)
+    return clueCounter
 
-def objects(room, inventory=[], item=0):
+def objects(room, inventory=None, item=0):
     """
     Prints all items in the room.
     """
@@ -445,7 +485,8 @@ def objects(room, inventory=[], item=0):
         elif 'magnet' in inventory and item == 1:
             print("In this room there is a broken 'stereo' and a broken digital 'lock'.")
         else:
-            print("In this room there is nothing but a lone 'stereo' laying on the floor, and a digital 'lock' keeping the door shut.")
+            print("In this room there is nothing but a lone 'stereo' laying on the floor, "
+                  "and a digital 'lock' keeping the door shut.")
     elif room == 3:
         if 'wet-key' in inventory and item == 0:
             print("There is nothing left in the room, but the door is still locked.")
@@ -455,14 +496,15 @@ def objects(room, inventory=[], item=0):
         elif 'wet-key' not in inventory and item == 0:
             print("In this room there is a 'rope' and a 'wet-key' on the other side of the wall.")
     elif room == 4:
-        print("In this room there is a 'lamp' and a 'clock' hanging on the wall, on the opposite side there is a 'closet' "
+        print("In this room there is a 'lamp' and a 'clock' hanging on the wall, "
+              "on the opposite side there is a 'closet' "
               "and finally there is a 'padlock'.")
     elif room == 5:
         print("In this room there is a 'cipher-lock' protecting something, and a normal 'lock' on the exit door.")
     elif room == 6:
-        print("In room 7 there is...")
+        print("In the final room there is a 'game' and two chairs. Along with the big main entrance of the castle!")
 
-def titta(objectName, room, inventory=[], item=0):
+def titta(objectName, room, inventory=None, item=0):
     """
     Describes an object.
     """
@@ -523,11 +565,13 @@ def titta(objectName, room, inventory=[], item=0):
         print("A cipher lock, requiring you to solve a Caesar-cipher.")
     elif objectName == 'modern-key' and 'modern-key' in inventory:
         print("A modern key, made out of stainless steel.")
+    elif objectName == 'game' and room == 6:
+        print("A game of Tic Tac Toe!")
     else:
         print("There is no such object!")
 
     
-def oppna(objectName, room, inventory, item=[]):
+def oppna(objectName, room, inventory, item=0):
     """
     Opens an object, if possible.
     """
@@ -575,11 +619,41 @@ def oppna(objectName, room, inventory, item=[]):
             print("You check the box once again but there is nothing to be found!")
         else:
             item = decrypt(inventory)
-            return(item)
+            return item
+    elif objectName == 'game' and room == 6:
+        if item == 1:
+            print("Marvin says: You have already defeated me! You are free to go.")
+        else:
+            print("Marvin says: Mohahaha! The one who locked you up from the beginning was me!!! "
+                  "I planned to lock you in here forever but you kept defeating room after room. "
+                  "This is the final room, and now you have to survive a game of Tic Tac Toe with me. "
+                  "If you win or play a draw you are free to go, but if you lose you will be locked in here forever!")
+            input("\nPress enter to continue...")
+            item = ticTacToe.main()
+            if item == 1:
+                print("You survived a game against me!!!! You truly deserve to be free!")
+                print("Door 7 has now been unlocked.")
+                input("\nPress enter to continue...")
+            elif item == 2:
+                print("Mohahaha!!! You lost and you will be locked in here forever... "
+                      "however I am kind so you will get one more chance!")
+                input("\nPress enter to continue...")
+            print("""
+                            Room 7
+                   __________==__________
+                  |                      |
+                  |     _                |
+                  |    | |               |
+                  |    |x|               |
+                  |    |_|               |
+                  |                      |
+                  |_________====_________|
+                  """)
+        return item
     else:
         print("This object doesn't exist or it can't be opened!")
     
-def sparka(objectName, room, inventory=[], item=0):
+def sparka(objectName, room, inventory=None, item=0):
     """
     Kicks an object, if possible, and breaks it.
     """
@@ -610,7 +684,6 @@ def inventoryList(inventory):
     """
     Prints the players inventory.
     """
-    inventoryCount = 0
     inventoryNames = ""
     if not inventory:
         print("Your inventory is empty!")
@@ -660,13 +733,21 @@ def ta(objectName, inventory, room):
     else:
         print("This object doesn't exist or it can't be taken!")
 
-def slapp(objectName, inventory):
+def slapp(objectName, inventory=None, currentRoom=0, item=0):
     """
     Drops an item from inventory.
     """
+    if inventory == None:
+        inventory = []
+    dropableItems = ['note']
     if objectName in inventory:
-        inventory.remove(objectName)
-        print("'%s' was removed from your inventory." % objectName)
+        if objectName in dropableItems:
+            inventory.remove(objectName)
+            print("'%s' was removed from your inventory and placed in it's original place." % objectName)
+            item = objectName
+            roomSelector(currentRoom, inventory, item)
+        else:
+            print("This item can't be dropped!")
     else:
         print("There is no such item in your inventory!")
 
@@ -762,7 +843,8 @@ def anvand(objectName, inventory, room, item=0):
                 print("You turn on the 'UV-light' and light it onto the 'note' in your inventory and a secret "
                       "message shows up! It says nothing but: 5987")
             else:
-                print("You try to turn on the UV-light but nothing happens because there are no batteries inside of it.")
+                print("You try to turn on the UV-light but nothing happens because "
+                      "there are no batteries inside of it.")
         elif objectName == 'modern-key':
             if room == 5:
                 print("You put the 'modern-key' into the lock, and it works!"
@@ -776,9 +858,9 @@ def anvand(objectName, inventory, room, item=0):
     else:
         print("There is no such item in your inventory!")
     if item >= 1:
-        return(item)
+        return item
     else:
-        return(0)
+        return 0
 
 def padlock(room, padlockStatus):
     """
@@ -806,7 +888,7 @@ def padlock(room, padlockStatus):
             else:
                 print("The combination didn't work! Maybe there is a clue somewhere?")
                 padlockStatus = 0
-    return(padlockStatus)
+    return padlockStatus
 
 def decrypt(inventory):
     """
@@ -868,10 +950,53 @@ def decrypt(inventory):
               |                 | |  |
               |__________==__________|
               """)
-        return(1)
+        return 1
     else:
         print("\nERROR! WRONG KEY!")
-        return(0)
+        return 0
+
+def saveGame(fileName, currentRoom, clueCount, padlock1, padlock2, rustyKey, stereoMagnet,
+             wetKey, uvLight, decrypter, decryptLock, game, inventory):
+    """
+    Saves all relevant game variables to a user specified filename.
+    """
+    fileName = fileName + ".json"
+    jsonfile = open(fileName, "w")
+    gameDict = {"currentRoom": currentRoom, "clueCount": clueCount, "padlock1": padlock1, "padlock2": padlock2,
+                "rustyKey": rustyKey, "stereoMagnet": stereoMagnet, "wetKey": wetKey, "uvLight": uvLight, 
+                "decrypter": decrypter, "decryptLock": decryptLock, "game": game, "inventory": inventory}
+    json.dump(gameDict, jsonfile, indent=4)
+    print("Your game has been saved to the file %s." % fileName)
+
+def loadGame(fileName, currentRoom, clueCount, padlock1, padlock2, rustyKey, stereoMagnet,
+             wetKey, uvLight, decrypter, decryptLock, game, inventory):
+    """
+    Loads all relevant game variables to a user specified filename.
+    """
+    fileName = fileName + ".json"
+
+    if os.path.isfile(fileName) == False:
+        print("File doesn't exist!")
+        return(currentRoom, clueCount, padlock1, padlock2, rustyKey, stereoMagnet,
+               wetKey, uvLight, decrypter, decryptLock, game, inventory)
+    else:
+        jsonfile = open(fileName, "r")
+        jsonobject = json.load(jsonfile)
+
+        currentRoom = jsonobject["currentRoom"]
+        clueCount = jsonobject["clueCount"]
+        padlock1 = jsonobject["padlock1"]
+        padlock2 = jsonobject["padlock2"]
+        rustyKey = jsonobject["rustyKey"]
+        stereoMagnet = jsonobject["stereoMagnet"]
+        wetKey = jsonobject["wetKey"]
+        uvLight = jsonobject["uvLight"]
+        decrypter = jsonobject["decrypter"]
+        decryptLock = jsonobject["decryptLock"]
+        game = jsonobject["game"]
+        inventory = jsonobject["inventory"]
+        return(currentRoom, clueCount, padlock1, padlock2, rustyKey, stereoMagnet,
+               wetKey, uvLight, decrypter, decryptLock, game, inventory)
 
 def mainGame():
     """
@@ -887,11 +1012,14 @@ def mainGame():
     uvLight = 0
     decrypter = 0
     decryptLock = 0
+    game = 0
     inventory = []
 
     print("\nWelcome to this mysterious adventure! Tell Marvin 'h' or 'hjälp' to get a list of all available commands. "
-          "Whenever you get into a new room it might be useful to use the 'se' command to look around. If you get stuck "
-          "don't forget you can always get a hint with 'l' or 'ledtråd'."
+          "Whenever you get into a new room it might be useful to use the 'se' command to look around. "
+          "If you get stuck don't forget you can always get a hint with 'l' or 'ledtråd'. "
+          "\n\nTo save your game, tell Marvin 'save' along with a filename, like 'save game1', "
+          "and to load a game tell Marvin 'load' along with a filename, like 'load game1' "
           "\n\nYou and a stranger named Marvin suddenly wake up in a cold, damp room. "
           "Where are you and how will you escape? Maybe there is something in the room you can use?")
 
@@ -902,8 +1030,24 @@ def mainGame():
     while True:
         command = input("\nTell Marvin what you want to do: ")
         print("\n")
+
+        if 'save ' in command:
+            saveGame(command[5:len(command)], currentRoom, clueCount, padlock1, padlock2, rustyKey, stereoMagnet,
+                     wetKey, uvLight, decrypter, decryptLock, game, inventory)
+        elif 'load ' in command:
+            (currentRoom, clueCount, padlock1, padlock2, rustyKey, stereoMagnet, wetKey, uvLight, decrypter, 
+             decryptLock, game, inventory) = loadGame(command[5:len(command)], currentRoom, clueCount, padlock1,
+                                                      padlock2, rustyKey, stereoMagnet, wetKey, uvLight, decrypter,
+                                                      decryptLock, game, inventory)
+            roomSelector(currentRoom)
+        elif 'motherlode' in command: # Cheat load
+            (currentRoom, clueCount, padlock1, padlock2, rustyKey, stereoMagnet, wetKey, uvLight, decrypter, 
+             decryptLock, game, inventory) = loadGame(command, currentRoom, clueCount, padlock1, padlock2, rustyKey,
+                                                      stereoMagnet, wetKey, uvLight, decrypter,
+                                                      decryptLock, game, inventory)
+            roomSelector(currentRoom)
         # Room commands.
-        if 'i' in command.split() or 'info' in command.split():
+        elif 'i' in command.split() or 'info' in command.split():
             roomInfo(currentRoom)
         elif 'h' in command.split() or 'hjälp' in command.split():
             hjalp()
@@ -920,6 +1064,8 @@ def mainGame():
                 currentRoom = fram(currentRoom, inventory, padlock2, decrypter)
             elif currentRoom == 5:
                 currentRoom = fram(currentRoom, inventory, decryptLock, decrypter)
+            elif currentRoom == 6:
+                currentRoom = fram(currentRoom, inventory, game)
             else:
                 currentRoom = fram(currentRoom, inventory)
             clueCount = 0
@@ -983,6 +1129,8 @@ def mainGame():
                 oppna(command[2:len(command)], currentRoom, inventory, uvLight)
             elif 'cipher-lock' in command and currentRoom == 5:
                 decrypter = oppna(command[2:len(command)], currentRoom, inventory, decrypter)
+            elif 'game' in command and currentRoom == 6:
+                game = oppna(command[2:len(command)], currentRoom, inventory, game)
             else:
                 oppna(command[2:len(command)], currentRoom, inventory)
         elif 'öppna ' in command:
@@ -1000,6 +1148,8 @@ def mainGame():
                 oppna(command[6:len(command)], currentRoom, inventory, uvLight)
             elif 'cipher-lock' in command and currentRoom == 5:
                 decrypter = oppna(command[6:len(command)], currentRoom, inventory, decrypter)
+            elif 'game' in command and currentRoom == 6:
+                game = oppna(command[6:len(command)], currentRoom, inventory, game)
             else:
                 oppna(command[6:len(command)], currentRoom, inventory)
         elif 's ' in command:
@@ -1024,7 +1174,7 @@ def mainGame():
         elif 'sl ' in command:
             slapp(command[3:len(command)], inventory)
         elif 'släpp ' in command:
-            slapp(command[6:len(command)], inventory)
+            slapp(command[6:len(command)], inventory, currentRoom, command[6:len(command)])
         elif 'a ' in command:
             if 'rusty-key' in command and currentRoom == 1:
                 rustyKey = anvand(command[2:len(command)], inventory, currentRoom, rustyKey)
@@ -1067,11 +1217,11 @@ def main():
     The main function of the program, which looks for options and launches the game.
     """          
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hivac", ["help", "info", "version", "about", "cheat"])
+        opts, _ = getopt.getopt(sys.argv[1:], "hivac", ["help", "info", "version", "about", "cheat"])
     except getopt.GetoptError:          
         usage()                        
         sys.exit(1)                     
-    for opt, arg in opts:
+    for opt, _ in opts:
         if opt in ("-h", "--help"):
             usage()                     
             sys.exit(0) 

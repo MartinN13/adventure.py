@@ -1,0 +1,17 @@
+{
+    "wetKey": 1,
+    "padlock1": 1,
+    "game": 1,
+    "uvLight": 1,
+    "stereoMagnet": 1,
+    "rustyKey": 1,
+    "decrypter": 1,
+    "currentRoom": 6,
+    "decryptLock": 1,
+    "clueCount": 1,
+    "padlock2": 1,
+    "inventory": [
+        "note",
+        "fishing-tool"
+    ]
+}

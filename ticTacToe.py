@@ -45,6 +45,38 @@ def main():
     """
     Main function.
     """
+    print("""\nMarvin says: 'Before we start I will explain the rules of the game.
+You get to start, and you play as 'o' while I'm 'x'.
+The game works in that you select which row and column you want to place your marker on.""")
+
+    input("\nPress enter to continue...")
+
+    print("""\nThe game-board is divided like this:
+
+   0 1 2
+   _ _ _
+0 |_|_|_|
+1 |_|_|_|
+2 |_|_|_|""")
+
+    input("\nPress enter to continue...")
+
+    print("""\nFor example, if you were to select row 0, column 0, and the next turn row 1, column 1, you would get:
+
+ _ _ _
+|o|_|_|
+|_|o|_|
+|_|_|_|""")
+
+    input("\nPress enter to continue...")
+
+    print("""\nYou can save your game any time by writing 's' as your choice on either the row or column choice.
+To load the last saved game write 'l' instead.
+
+Good luck!""")
+
+    input("\nPress enter to continue...")
+
     matrix = createMatrix(3, 3, "_")
 
     counter = 0
@@ -83,8 +115,8 @@ def main():
            matrix[0][2] != "x" and matrix[0][2] != "_" and\
            matrix[1][1] != "x" and matrix[1][1] != "_" and \
            matrix[2][0] != "x" and matrix[2][0] != "_":
-            print('You won!')
-            break
+            # Won game
+            return 1
         # or losing...
         elif matrix[0][0] == matrix[0][1] == matrix[0][2] and \
              matrix[0][0] != "o" and matrix[0][0] != "_" and \
@@ -118,12 +150,12 @@ def main():
              matrix[0][2] != "o" and matrix[0][2] != "_" and\
              matrix[1][1] != "o" and matrix[1][1] != "_" and \
              matrix[2][0] != "o" and matrix[2][0] != "_":
-            print('You lost!')
-            break
+            # Lost game
+            return 2
         # or draw!
         elif counter >= 9:
-            print("It's a draw!")
-            break
+            # Draw game
+            return 1
 
         if counter % 2: # Computer's turn
             char = "x"
@@ -317,9 +349,19 @@ def main():
                             posY = 2
                             posX = 2 
         else:
-            char = "o"
-            posY = input("Enter a row: ")
-            posX = input("Enter a column (or q for quit): ")
+            playerMove = 0
+
+            while playerMove < 1:
+                char = "o"
+                posY = input("Enter a row: ")
+                posX = input("Enter a column (or q for quit): ")
+                if matrix[int(posY)][int(posX)] == "x" or matrix[int(posY)][int(posX)] == "o":
+                    print("\nThat spot is already taken!\n")
+                    playerMove = 0
+                else:
+                    playerMove = 1
+
+
 
         counter += 1
 
