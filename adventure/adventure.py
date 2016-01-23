@@ -955,21 +955,21 @@ def decrypt(inventory):
         print("\nERROR! WRONG KEY!")
         return 0
 
-def saveGame(fileName, currentRoom, clueCount, padlock1, padlock2, rustyKey, stereoMagnet,
-             wetKey, uvLight, decrypter, decryptLock, game, inventory):
+def saveGame(fileName, gameVariables):
     """
     Saves all relevant game variables to a user specified filename.
     """
     fileName = fileName + ".json"
     jsonfile = open(fileName, "w")
-    gameDict = {"currentRoom": currentRoom, "clueCount": clueCount, "padlock1": padlock1, "padlock2": padlock2,
-                "rustyKey": rustyKey, "stereoMagnet": stereoMagnet, "wetKey": wetKey, "uvLight": uvLight, 
-                "decrypter": decrypter, "decryptLock": decryptLock, "game": game, "inventory": inventory}
+    print(gameVariables)
+    gameDict = {"currentRoom": gameVariables[0], "clueCount": gameVariables[1], "padlock1": gameVariables[2], 
+                "padlock2": gameVariables[3], "rustyKey": gameVariables[4], "stereoMagnet": gameVariables[5],
+                "wetKey": gameVariables[6], "uvLight": gameVariables[7], "decrypter": gameVariables[8],
+                "decryptLock": gameVariables[9], "game": gameVariables[10], "inventory": gameVariables[11]}
     json.dump(gameDict, jsonfile, indent=4)
     print("Your game has been saved to the file %s." % fileName)
 
-def loadGame(fileName, currentRoom, clueCount, padlock1, padlock2, rustyKey, stereoMagnet,
-             wetKey, uvLight, decrypter, decryptLock, game, inventory):
+def loadGame(fileName, gameVariables):
     """
     Loads all relevant game variables to a user specified filename.
     """
@@ -977,26 +977,28 @@ def loadGame(fileName, currentRoom, clueCount, padlock1, padlock2, rustyKey, ste
 
     if os.path.isfile(fileName) == False:
         print("File doesn't exist!")
-        return(currentRoom, clueCount, padlock1, padlock2, rustyKey, stereoMagnet,
-               wetKey, uvLight, decrypter, decryptLock, game, inventory)
+        return(gameVariables[0], gameVariables[1], gameVariables[2], gameVariables[3],
+               gameVariables[4], gameVariables[5], gameVariables[6], gameVariables[7],
+               gameVariables[8], gameVariables[9], gameVariables[10], gameVariables[11])
     else:
         jsonfile = open(fileName, "r")
         jsonobject = json.load(jsonfile)
 
-        currentRoom = jsonobject["currentRoom"]
-        clueCount = jsonobject["clueCount"]
-        padlock1 = jsonobject["padlock1"]
-        padlock2 = jsonobject["padlock2"]
-        rustyKey = jsonobject["rustyKey"]
-        stereoMagnet = jsonobject["stereoMagnet"]
-        wetKey = jsonobject["wetKey"]
-        uvLight = jsonobject["uvLight"]
-        decrypter = jsonobject["decrypter"]
-        decryptLock = jsonobject["decryptLock"]
-        game = jsonobject["game"]
-        inventory = jsonobject["inventory"]
-        return(currentRoom, clueCount, padlock1, padlock2, rustyKey, stereoMagnet,
-               wetKey, uvLight, decrypter, decryptLock, game, inventory)
+        gameVariables[0] = jsonobject["currentRoom"]
+        gameVariables[1] = jsonobject["clueCount"]
+        gameVariables[2] = jsonobject["padlock1"]
+        gameVariables[3] = jsonobject["padlock2"]
+        gameVariables[4] = jsonobject["rustyKey"]
+        gameVariables[5] = jsonobject["stereoMagnet"]
+        gameVariables[6] = jsonobject["wetKey"]
+        gameVariables[7] = jsonobject["uvLight"]
+        gameVariables[8] = jsonobject["decrypter"]
+        gameVariables[9] = jsonobject["decryptLock"]
+        gameVariables[10] = jsonobject["game"]
+        gameVariables[11] = jsonobject["inventory"]
+        return(gameVariables[0], gameVariables[1], gameVariables[2], gameVariables[3],
+               gameVariables[4], gameVariables[5], gameVariables[6], gameVariables[7],
+               gameVariables[8], gameVariables[9], gameVariables[10], gameVariables[11])
 
 def mainGame():
     """
@@ -1032,19 +1034,26 @@ def mainGame():
         print("\n")
 
         if 'save ' in command:
-            saveGame(command[5:len(command)], currentRoom, clueCount, padlock1, padlock2, rustyKey, stereoMagnet,
-                     wetKey, uvLight, decrypter, decryptLock, game, inventory)
+            gameVariables = []
+            gameVariables.extend((currentRoom, clueCount, padlock1, padlock2, rustyKey,
+                                  stereoMagnet, wetKey, uvLight, decrypter,
+                                  decryptLock, game, inventory))
+            saveGame(command[5:len(command)], gameVariables)
         elif 'load ' in command:
+            gameVariables = []
+            gameVariables.extend((currentRoom, clueCount, padlock1, padlock2, rustyKey,
+                                  stereoMagnet, wetKey, uvLight, decrypter,
+                                  decryptLock, game, inventory))
             (currentRoom, clueCount, padlock1, padlock2, rustyKey, stereoMagnet, wetKey, uvLight, decrypter, 
-             decryptLock, game, inventory) = loadGame(command[5:len(command)], currentRoom, clueCount, padlock1,
-                                                      padlock2, rustyKey, stereoMagnet, wetKey, uvLight, decrypter,
-                                                      decryptLock, game, inventory)
+             decryptLock, game, inventory) = loadGame(command[5:len(command)], gameVariables)
             roomSelector(currentRoom)
         elif 'motherlode' in command: # Cheat load
+            gameVariables = []
+            gameVariables.extend((currentRoom, clueCount, padlock1, padlock2, rustyKey,
+                                  stereoMagnet, wetKey, uvLight, decrypter,
+                                  decryptLock, game, inventory))
             (currentRoom, clueCount, padlock1, padlock2, rustyKey, stereoMagnet, wetKey, uvLight, decrypter, 
-             decryptLock, game, inventory) = loadGame(command, currentRoom, clueCount, padlock1, padlock2, rustyKey,
-                                                      stereoMagnet, wetKey, uvLight, decrypter,
-                                                      decryptLock, game, inventory)
+             decryptLock, game, inventory) = loadGame(command, gameVariables)
             roomSelector(currentRoom)
         # Room commands.
         elif 'i' in command.split() or 'info' in command.split():
